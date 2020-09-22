@@ -117,7 +117,7 @@ class Enemy(arcade.Sprite):
             x_diff = self.player.center_x - self.center_x
             y_diff = self.player.center_y - self.center_y
             self.angle = math.degrees(math.atan2(y_diff, x_diff)) - 90
-
+            #see way to decrease delay time between levels!!!!
             if self.curtime > self.delay:
                 self.delay = self.curtime + random.randint(100, 200)
                 self.shoot()
@@ -144,6 +144,7 @@ class MyApplication(arcade.Window):
         self.curtime = 0
         self.score = 0
         self.room = 0
+
 
         # Sprite lists
         self.all_sprites_list = None
@@ -409,17 +410,20 @@ class MyApplication(arcade.Window):
         self.coin_list.draw()
         self.ammo_list.draw()
 
+        level = int(self.room) + 1
         # If you get a high score change the text
         if self.highscore_sound:
             # Render the high-score text
-            output = "High Score: " + str(self.highscore)
+            #level=int(self.room)+1
+            output ="Level: " + str(level) + " / High Score: " + str(self.highscore)
             if not self.highscore_text or self.highscore_text != output:
                 self.highscore_text = arcade.create_text(output, arcade.color.YELLOW, 14)
 
             arcade.render_text(self.highscore_text, self.view_left + 8, self.view_bottom + 365)
         else:
             # Render the score text
-            output = "Score: " + str(self.score) + " (" + str(self.highscore) + ")"
+            #level = int(self.room) + 1
+            output = "Level: " + str(level) + " / Score: " + str(self.score) + " (" + str(self.highscore) + ")"
             if not self.score_text or self.score_text != output:
                 self.score_text = arcade.create_text(output, arcade.color.GREEN, 10)
 
@@ -780,7 +784,7 @@ class MyApplication(arcade.Window):
                 # arcade.play_sound(self.sound_list[3])
                 item.kill()
                 if self.health <= 90:
-                    self.health += 10
+                    self.health += 20
                 else:
                     self.health += (100 - self.health)
 
@@ -788,6 +792,7 @@ class MyApplication(arcade.Window):
         y = self.doorpos * 32
         if (y - 16) < self.player_sprite.center_y < (y + 16) and self.player_sprite.center_x > ((BR_X - 2) * 32):
             self.room += 1
+            self.health = 100
             self.score = int(self.score * (1 + (self.room / 10)))  # Give a bonus for beating a dungeon.
             self.setup()
 
