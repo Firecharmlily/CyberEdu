@@ -39,7 +39,7 @@ BR_Y = 48
 
 VIEWPORT_MARGIN = 200
 
-MOVEMENT_SPEED = 3
+MOVEMENT_SPEED = 5
 
 
 class Arrow(arcade.Sprite):
@@ -65,7 +65,7 @@ class Enemy(arcade.Sprite):
         self.fireball_list = None
         self.sound_list = None
         self.coin_list = None
-        self.health = 100
+        self.health = 200
         self.death_animation = 0
 
     def shoot(self):
@@ -244,13 +244,12 @@ class MyApplication(arcade.Window):
         self.ng_y = 0
 
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite, self.wall_list)
-        arcade.set_background_color(arcade.color.BLACK)
+        arcade.set_background_color(arcade.color.DARK_TANGERINE)
         self.generate_map()
         # arcade.play_sound(self.sound_list[0])
 
     def generate_map(self):
         self.blocks[1][5] = False
-
         self.ng_x = 1
         self.ng_y = 5
         self.direction = "right"
@@ -304,7 +303,8 @@ class MyApplication(arcade.Window):
             # Create spawn door
             if self.ng_x >= BR_X - 1:
                 self.doorpos = self.ng_y
-                wall = arcade.Sprite("images/castle_door_open.png", 1)
+                wall = arcade.Sprite("images/TestSite/open_w_door.png", 1)
+                #wall = arcade.Sprite("images/castle_door_open.png", 1)
                 wall.center_x = self.ng_x * 32
                 wall.center_y = self.ng_y * 32
                 self.all_sprites_list.append(wall)
@@ -313,10 +313,11 @@ class MyApplication(arcade.Window):
 
         # Create a randomly chosen wall sprite where all the wall blocks should  be.
         wall_textures = []
-        wall_textures.append("images/tile_1.png")
-        wall_textures.append("images/tile_2.png")
-        wall_textures.append("images/tile_3.png")
-        wall_textures.append("images/tile_4.png")
+        wall_textures.append("images/TestSite/rsz_Tree_Test_sprite.png")
+        #wall_textures.append("images/tile_1.png")
+        #wall_textures.append("images/tile_2.png")
+       # wall_textures.append("images/tile_3.png")
+       # wall_textures.append("images/tile_4.png")
         for x in range(BR_X):
             for y in range(BR_Y):
                 if self.blocks[x][y]:
@@ -369,7 +370,8 @@ class MyApplication(arcade.Window):
             arcade.set_background_color(arcade.color.BLIZZARD_BLUE)
 
         # Create end door
-        wall = arcade.Sprite("images/castle_door_closed.png", 1)
+        wall = arcade.Sprite("images/TestSite/closed_w_door.png", 1)
+        #wall = arcade.Sprite("images/castle_door_closed.png", 1)
         wall.center_x = 0
         wall.center_y = 5 * 32
         self.all_sprites_list.append(wall)
@@ -488,7 +490,7 @@ class MyApplication(arcade.Window):
                 # If it's an enemy kill it
                 for enemy in self.enemy_list:
                     if box_l < enemy.center_x < box_r and box_b < enemy.center_y < box_t:
-                        enemy.health = 0
+                        enemy.health = 100
                         # arcade.play_sound(self.sound_list[14])
                         # arcade.play_sound(self.sound_list[6])
 
@@ -698,7 +700,7 @@ class MyApplication(arcade.Window):
                     fireball.kill()
                     self.open_chest(chest)
 
-            # If it hits the player hurt them
+            # If it hits the player hurt them FIREBALL DAMAGE
             if not fireball.reflected:
                 if arcade.check_for_collision(fireball, self.player_sprite):
                     self.health -= 25
