@@ -67,6 +67,7 @@ class Enemy(arcade.Sprite):
         self.coin_list = None
         self.health = 200
         self.death_animation = 0
+        self.room = 0
 
     def shoot(self):
         if self.player.alive:
@@ -119,7 +120,7 @@ class Enemy(arcade.Sprite):
             self.angle = math.degrees(math.atan2(y_diff, x_diff)) - 90
             #see way to decrease delay time between levels!!!!
             if self.curtime > self.delay:
-                self.delay = self.curtime + random.randint(100, 200)
+                self.delay = self.curtime + random.randint(100, 200) * (1 / math.sqrt(2 * (self.room + 0.5)))
                 self.shoot()
         else:
             # Prevent detection noise from playing every frame
@@ -360,6 +361,7 @@ class MyApplication(arcade.Window):
                             enemy.growl = False
                             enemy.health = 100
                             enemy.death_animation = 0
+                            enemy.room = self.room
                             enemy.append_texture(self.demon_die_1)
                             enemy.append_texture(self.demon_die_2)
                             enemy.append_texture(self.demon_slash)
