@@ -153,6 +153,7 @@ current_fps = 0
 dt = 0 # delta time
 last_frame = pygame.time.get_ticks()
 game_speed = 1
+frozen = False
 
 player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
 player.set_offset([-3, -2])
@@ -194,7 +195,7 @@ pygame.mixer.music.load('data/music.wav')
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.5)
 
-shoot_s_cooldown = 1000
+shoot_s_cooldown = 0
 
 # Loop ------------------------------------------------------- #
 while True:
@@ -218,7 +219,7 @@ while True:
 
     if win != 0:
         win += 1
-
+ 
     game_speed += (1 - game_speed) / 20
     if win < 50:
         bar_height += ((1 - game_speed) * 40 - bar_height) / 10
@@ -232,7 +233,7 @@ while True:
                 tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
             except FileNotFoundError:
                 break
-            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
+            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=False)
             player.set_offset([-3, -2])
             bullets = []
             explosion_particles = []
@@ -337,7 +338,7 @@ while True:
             entity[2] += ((((math.degrees(angle) - entity[2]) + 180) % 360) - 180) / 20 * dtf(dt) * game_speed
             entity[3] += game_speed * dtf(dt)
             if entity[3] > 20:
-                if moved:
+                if moved and player.visible:
                     if shoot_s_cooldown == 0:
                         turret_shoot_s.play()
                         shoot_s_cooldown = 12
@@ -451,12 +452,13 @@ while True:
     shoot_timer = max(shoot_timer - 1 * dtf(dt) * game_speed, 0)
 
     if click and not dead:
+
         if shoot_timer == 0:
             moved = True
             shoot_s.play()
-            shoot_timer = 50
-            player_velocity[0] -= math.cos(math.radians(-rot)) * 6
-            player_velocity[1] -= math.sin(math.radians(-rot)) * 6
+            shoot_timer = 1
+            player_velocity[0] -= math.cos(math.radians(-rot)) * 1  # recoil
+            player_velocity[1] -= math.sin(math.radians(-rot)) * 1
             bullets.append(['player', [player.get_center()[0], player.get_center()[1] + 3], math.radians(-rot + random.randint(0, 12) - 6), 20])
             for i in range(3):
                 rot_offset = random.randint(0, 50) - 25
@@ -466,6 +468,9 @@ while True:
     for i, bullet in sorted(list(enumerate(bullets)), reverse=True):
         bullet[1][0] += math.cos(bullet[2]) * bullet[3] * dtf(dt) * game_speed
         bullet[1][1] += math.sin(bullet[2]) * bullet[3] * dtf(dt) * game_speed
+        if bullet[0] == 'turret' and player.get_distance(bullet[1]) < 24:
+            bullet[2] = 0
+
         popped = False
         if bullet[0] == 'turret':
             shot_img = pygame.transform.rotate(turret_shot_img, -math.degrees(bullet[2]))
@@ -612,7 +617,7 @@ while True:
                 main_display.blit(controls_1, (player.x - scroll[0] - 17, player.y - scroll[1] - 22))
             else:
                 main_display.blit(controls_2, (player.x - scroll[0] - 17, player.y - scroll[1] - 22))
-        text.show_text('shoot', 150 - int(get_text_width('shoot', 1) / 2), 35, 1, 9999, font, main_display)
+        text.show_text('Finish the level in less than 1 second!', 150 - int(get_text_width('Finish the level in less than 1 second!', 1) / 2), 35, 1, 9999, font, main_display)
         main_display.blit(core_img, (145, 47))
     if level == 2:
         text.show_text('drop to loop around', 150 - int(get_text_width('drop to loop around', 1) / 2), 45, 1, 9999, font, main_display)
@@ -641,7 +646,7 @@ while True:
             player_velocity = [0, 0]
     
     # Buttons ------------------------------------------------ #
-    click = False
+    # click = False
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -672,6 +677,7 @@ while True:
                     particles.append(e.particle(player.x, player.y + player.size_y, 'p', [-1, 2], 0.5, 2, (255, 255, 255), False))
                     particles.append(e.particle(player.x + player.size_x, player.y + player.size_y, 'p', [1, 2], 0.5, 2, (255, 255, 255), False))
                     jump_s.play()
+
         if event.type == KEYUP:
             if event.key == K_d:
                 right = False
@@ -680,7 +686,18 @@ while True:
         if event.type == MOUSEBUTTONDOWN:
             if event.button == 1:
                 click = True
+            if event.button == 2:
+                dead = True
+            if event.button == 3:
+                frozen = True
+        if event.type == MOUSEBUTTONUP:
+            if event.button == 1:
+                click = False
+            if event.button == 3:
+                frozen = False
 
+    if frozen:
+        game_speed = 0
     # Bars --------------------------------------------------- #
     bar_surf = pygame.Surface((display.get_width(), bar_height))
     bar_surf.fill((8, 5, 8))
@@ -689,7 +706,7 @@ while True:
 
     # Background Effect -------------------------------------- #
     mask = pygame.mask.from_surface(main_display)
-    mask_surf = mask.to_surface(setcolor=(8,5,8))
+    mask_surf = mask.to_surface(setcolor=(8, 5, 8))
     mask_surf.set_colorkey((0,0,0))
     display.blit(mask_surf, (2, 2))
     display.blit(main_display, (0, 0))
@@ -710,6 +727,22 @@ while True:
     current_fps = int(fps.get_framerate())
     mainClock.tick(60)
 
+
+import sqlite3 as sql
+from sys import argv
+
+conn = sql.connect('scores.db')
+cursor = conn.cursor()
+
+name = "Temp" if len(argv) < 1 else argv[1]
+
+cursor.execute('''CREATE TABLE IF NOT EXISTS scores (name text, time real);''')
+s_query = f'''INSERT INTO scores (name,time) VALUES ('{name}','{total_time}'); '''
+print(s_query)
+cursor.execute(s_query)
+conn.commit()
+conn.close()
+
 while True:
     display.fill((34,23,36))
     for event in pygame.event.get():
@@ -720,8 +753,12 @@ while True:
             if event.key == K_ESCAPE:
                 pygame.quit()
                 sys.exit()
+
+
+
     text.show_text('You Win!', 150 - get_text_width('You Win!', 1) / 2, 90, 1, 9999, font, display)
     text.show_text(convert_time(total_time), 150 - get_text_width(convert_time(total_time), 1) / 2, 100, 1, 9999, font, display)
+
     screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
     pygame.display.update()
     mainClock.tick(60)
