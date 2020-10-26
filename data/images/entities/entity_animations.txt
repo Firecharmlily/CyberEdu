@@ -1,0 +1,6 @@
+player/idle/ 7;7;7;7;7 loop
+player/run/ 4;4;4;4 loop
+player/jump/ 1 loop
+player/fall/ 7;7;7;7 loop
+core/idle/ 40;8 loop
+turret/idle/ 1 loop
