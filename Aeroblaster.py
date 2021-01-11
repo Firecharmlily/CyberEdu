@@ -6,19 +6,23 @@ import data.fps as fps
 import data.text as text
 import data.engine as e
 from data.outline import perfect_outline as outline
+from sys import argv
+
+import sqlite3 as sql
 
 # Setup pygame/window ---------------------------------------- #
 mainClock = pygame.time.Clock()
 from pygame.locals import *
+
 pygame.init()
 pygame.display.set_caption('Aeroblaster')
-screen = pygame.display.set_mode((894, 594),0,32)
+screen = pygame.display.set_mode((894, 594), 0, 32)
 
 pygame.mouse.set_visible(False)
 
 display = pygame.Surface((300, 200))
 main_display = display.copy()
-main_display.set_colorkey((0,0,0))
+main_display.set_colorkey((0, 0, 0))
 
 # Images ----------------------------------------------------- #
 tileset_images = load_tileset('data/images/')
@@ -26,10 +30,12 @@ e.set_global_colorkey((0, 0, 0))
 e.load_animations('data/images/entities/')
 e.load_particle_images('data/images/particles/')
 
+
 def load_img(name):
     img = pygame.image.load('data/images/' + name + '.png').convert()
     img.set_colorkey((0, 0, 0))
     return img
+
 
 gun_img = load_img('gun')
 cursor_img = load_img('cursor')
@@ -53,13 +59,19 @@ shoot_s.set_volume(0.3)
 turret_shoot_s.set_volume(0.6)
 
 # Font ------------------------------------------------------- #
-font_dat = {'A':[3],'B':[3],'C':[3],'D':[3],'E':[3],'F':[3],'G':[3],'H':[3],'I':[3],'J':[3],'K':[3],'L':[3],'M':[5],'N':[3],'O':[3],'P':[3],'Q':[3],'R':[3],'S':[3],'T':[3],'U':[3],'V':[3],'W':[5],'X':[3],'Y':[3],'Z':[3],
-          'a':[3],'b':[3],'c':[3],'d':[3],'e':[3],'f':[3],'g':[3],'h':[3],'i':[1],'j':[2],'k':[3],'l':[3],'m':[5],'n':[3],'o':[3],'p':[3],'q':[3],'r':[2],'s':[3],'t':[3],'u':[3],'v':[3],'w':[5],'x':[3],'y':[3],'z':[3],
-          '.':[1],'-':[3],',':[2],':':[1],'+':[3],'\'':[1],'!':[1],'?':[3],
-          '0':[3],'1':[3],'2':[3],'3':[3],'4':[3],'5':[3],'6':[3],'7':[3],'8':[3],'9':[3],
-          '(':[2],')':[2],'/':[3],'_':[5],'=':[3],'\\':[3],'[':[2],']':[2],'*':[3],'"':[3],'<':[3],'>':[3],';':[1]}
+font_dat = {'A': [3], 'B': [3], 'C': [3], 'D': [3], 'E': [3], 'F': [3], 'G': [3], 'H': [3], 'I': [3], 'J': [3],
+            'K': [3], 'L': [3], 'M': [5], 'N': [3], 'O': [3], 'P': [3], 'Q': [3], 'R': [3], 'S': [3], 'T': [3],
+            'U': [3], 'V': [3], 'W': [5], 'X': [3], 'Y': [3], 'Z': [3],
+            'a': [3], 'b': [3], 'c': [3], 'd': [3], 'e': [3], 'f': [3], 'g': [3], 'h': [3], 'i': [1], 'j': [2],
+            'k': [3], 'l': [3], 'm': [5], 'n': [3], 'o': [3], 'p': [3], 'q': [3], 'r': [2], 's': [3], 't': [3],
+            'u': [3], 'v': [3], 'w': [5], 'x': [3], 'y': [3], 'z': [3],
+            '.': [1], '-': [3], ',': [2], ':': [1], '+': [3], '\'': [1], '!': [1], '?': [3],
+            '0': [3], '1': [3], '2': [3], '3': [3], '4': [3], '5': [3], '6': [3], '7': [3], '8': [3], '9': [3],
+            '(': [2], ')': [2], '/': [3], '_': [5], '=': [3], '\\': [3], '[': [2], ']': [2], '*': [3], '"': [3],
+            '<': [3], '>': [3], ';': [1]}
 
-def get_text_width(text,spacing, font_dat=font_dat):
+
+def get_text_width(text, spacing, font_dat=font_dat):
     width = 0
     for char in text:
         if char in font_dat:
@@ -68,21 +80,24 @@ def get_text_width(text,spacing, font_dat=font_dat):
             width += font_dat['A'][0] + spacing
     return width
 
-font = text.generate_font('data/font/small_font.png',font_dat,5,8,(255, 255, 255))
+
+font = text.generate_font('data/font/small_font.png', font_dat, 5, 8, (255, 255, 255))
 
 # Other ------------------------------------------------------ #
 
 entity_info = {
-    14 : [9, 10, 'core', 4, 6],
-    15 : [13, 4, 'turret', 0, 0],
-    }
+    14: [9, 10, 'core', 4, 6],
+    15: [13, 4, 'turret', 0, 0],
+}
+
 
 def convert_time(ms):
     final_m = int(ms / 60000)
     final_s = int((ms - final_m * 60000) / 1000)
     final_ms = int(ms - final_m * 60000 - final_s * 1000)
     return str(final_m) + ':' + str(final_s) + '.' + str(final_ms)
-    
+
+
 def normalize(val, rate):
     if val > rate:
         val -= rate
@@ -92,6 +107,7 @@ def normalize(val, rate):
         val = 0
     return val
 
+
 def cap(val, val2):
     if val > val2:
         val = val2
@@ -99,11 +115,14 @@ def cap(val, val2):
         val = -val2
     return val
 
+
 def dtf(dt):
     return dt / 1000 * 60
 
+
 def xy2str(pos):
     return str(pos[0]) + ';' + str(pos[1])
+
 
 def load_level(number):
     f = open('data/levels/level_' + str(number) + '.txt', 'r')
@@ -128,11 +147,15 @@ def load_level(number):
         final_tile_map[xy2str(tile_map[tile][1])] = tile_map[tile].copy()
     for tile in final_tile_map:
         if final_tile_map[tile][0] == 16:
-            spawnpoint = [final_tile_map[tile][1][0] * 16, final_tile_map[tile][1][1] * 16 - 32 + (max_height - min_height + 1) * 50]
+            spawnpoint = [final_tile_map[tile][1][0] * 16,
+                          final_tile_map[tile][1][1] * 16 - 32 + (max_height - min_height + 1) * 50]
             remove_list.append(tile)
         elif (final_tile_map[tile][0] >= 14) and (final_tile_map[tile][0] < 16):
             remove_list.append(tile)
-            entity_dat = [e.entity(final_tile_map[tile][1][0] * 16 + entity_info[final_tile_map[tile][0]][3], final_tile_map[tile][1][1] * 16 + entity_info[final_tile_map[tile][0]][4], entity_info[final_tile_map[tile][0]][0], entity_info[final_tile_map[tile][0]][1], entity_info[final_tile_map[tile][0]][2]), False]
+            entity_dat = [e.entity(final_tile_map[tile][1][0] * 16 + entity_info[final_tile_map[tile][0]][3],
+                                   final_tile_map[tile][1][1] * 16 + entity_info[final_tile_map[tile][0]][4],
+                                   entity_info[final_tile_map[tile][0]][0], entity_info[final_tile_map[tile][0]][1],
+                                   entity_info[final_tile_map[tile][0]][2]), False]
             if final_tile_map[tile][0] == 15:
                 entity_dat += [0, 0]
             if final_tile_map[tile][0] == 14:
@@ -144,15 +167,17 @@ def load_level(number):
     limits = [limits[0] * 16, limits[1] * 16]
     return final_tile_map, entities, max_height - min_height + 1, spawnpoint, total_cores, limits
 
+
 top_tile_list = [9, 10, 11, 12, 13]
 
 level = 1
 tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
 
 current_fps = 0
-dt = 0 # delta time
+dt = 0  # delta time
 last_frame = pygame.time.get_ticks()
 game_speed = 1
+frozen = False
 
 player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
 player.set_offset([-3, -2])
@@ -194,19 +219,19 @@ pygame.mixer.music.load('data/music.wav')
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.5)
 
-shoot_s_cooldown = 1000
+shoot_s_cooldown = 0
 
 # Loop ------------------------------------------------------- #
 while True:
-    
+
     # Background --------------------------------------------- #
     dt = pygame.time.get_ticks() - last_frame
     last_frame = pygame.time.get_ticks()
     fps.get_time()
     if not dead:
         level_time += dt * game_speed
-    display.fill((34,23,36))
-    main_display.fill((0,0,0))
+    display.fill((34, 23, 36))
+    main_display.fill((0, 0, 0))
 
     if shoot_s_cooldown > 0:
         shoot_s_cooldown -= 1
@@ -214,7 +239,8 @@ while True:
     background_timer = (background_timer + dtf(dt) * game_speed * 0.5) % 20
     for i in range(16):
         i -= 4
-        pygame.draw.line(display, (8, 5, 8), (0, i * 20 - background_timer), (display.get_width(), i * 20 - background_timer + 30 * (1.2 / (game_speed + 0.2))), 7)
+        pygame.draw.line(display, (8, 5, 8), (0, i * 20 - background_timer),
+                         (display.get_width(), i * 20 - background_timer + 30 * (1.2 / (game_speed + 0.2))), 7)
 
     if win != 0:
         win += 1
@@ -232,7 +258,10 @@ while True:
                 tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
             except FileNotFoundError:
                 break
-            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
+
+            invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
+
+            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
             player.set_offset([-3, -2])
             bullets = []
             explosion_particles = []
@@ -304,9 +333,11 @@ while True:
             tile_y += map_height
         tile_y = int(tile_y)
         if (target_right in tile_map) and (tile_map[target_right][0] < 9):
-            pygame.draw.line(main_display, (74, 57, 79), (tile[0] * 16 + 16 - scroll[0], tile_y * 16 + 1 - scroll[1]), (tile[0] * 16 + 16 - scroll[0], tile_y * 16 + 15 - scroll[1]))
+            pygame.draw.line(main_display, (74, 57, 79), (tile[0] * 16 + 16 - scroll[0], tile_y * 16 + 1 - scroll[1]),
+                             (tile[0] * 16 + 16 - scroll[0], tile_y * 16 + 15 - scroll[1]))
         if (target_down in tile_map) and (tile_map[target_down][0] < 9):
-            pygame.draw.line(main_display, (74, 57, 79), (tile[0] * 16 + 1 - scroll[0], tile_y * 16 + 16 - scroll[1]), (tile[0] * 16 + 15 - scroll[0], tile_y * 16 + 16 - scroll[1]))
+            pygame.draw.line(main_display, (74, 57, 79), (tile[0] * 16 + 1 - scroll[0], tile_y * 16 + 16 - scroll[1]),
+                             (tile[0] * 16 + 15 - scroll[0], tile_y * 16 + 16 - scroll[1]))
         if (target_down_right in tile_map) and (tile_map[target_down_right][0] < 9):
             main_display.set_at((tile[0] * 16 + 16 - scroll[0], tile_y * 16 + 16 - scroll[1]), (74, 57, 79))
 
@@ -318,7 +349,8 @@ while True:
         if circle[2] < 1:
             circle_effects.pop(i)
         else:
-            pygame.draw.circle(main_display, circle[5], (circle[0][0] - scroll[0], circle[0][1] - scroll[1]), int(circle[1]), min(int(circle[2]), int(circle[1])))
+            pygame.draw.circle(main_display, circle[5], (circle[0][0] - scroll[0], circle[0][1] - scroll[1]),
+                               int(circle[1]), min(int(circle[2]), int(circle[1])))
 
     # Entities ----------------------------------------------- #
     for i, entity in sorted(list(enumerate(entities)), reverse=True):
@@ -332,31 +364,42 @@ while True:
             projectile_speed = 2
             player_dis = player.get_distance(entity[0].get_center())
             time_dis = player_dis / projectile_speed
-            player_target_pos = [player.get_center()[0] + time_dis * last_movement[0], player.get_center()[1] + time_dis * last_movement[1]]
+            player_target_pos = [player.get_center()[0] + time_dis * last_movement[0],
+                                 player.get_center()[1] + time_dis * last_movement[1]]
             angle = entity[0].get_point_angle(player_target_pos)
             entity[2] += ((((math.degrees(angle) - entity[2]) + 180) % 360) - 180) / 20 * dtf(dt) * game_speed
             entity[3] += game_speed * dtf(dt)
             if entity[3] > 20:
-                if moved:
+                if moved and player.visible:
                     if shoot_s_cooldown == 0:
                         turret_shoot_s.play()
                         shoot_s_cooldown = 12
                     entity[3] = 0
                     rot = math.radians(entity[2] + random.randint(0, 20) - 10)
-                    bullets.append(['turret', [entity[0].get_center()[0] + math.cos(rot) * 10, entity[0].get_center()[1] + 10 + math.sin(rot) * 10], rot, projectile_speed])
+                    bullets.append(['turret', [entity[0].get_center()[0] + math.cos(rot) * 10,
+                                               entity[0].get_center()[1] + 10 + math.sin(rot) * 10], rot,
+                                    projectile_speed])
                     for i2 in range(3):
                         rot_offset = random.randint(0, 50) - 25
-                        flashes.append([[entity[0].get_center()[0] + math.cos(rot + math.radians(rot_offset)) * 6, entity[0].get_center()[1] + 10 + math.sin(rot + math.radians(rot_offset)) * 6], random.randint(15, 35), rot + math.radians(rot_offset), 6, random.randint(0, 8)])
-            e.blit_center(main_display, pygame.transform.rotate(turret_barrel_img, -entity[2]), [entity[0].get_center()[0] - scroll[0], entity[0].get_center()[1] - scroll[1] + 10])
+                        flashes.append([[entity[0].get_center()[0] + math.cos(rot + math.radians(rot_offset)) * 6,
+                                         entity[0].get_center()[1] + 10 + math.sin(rot + math.radians(rot_offset)) * 6],
+                                        random.randint(15, 35), rot + math.radians(rot_offset), 6,
+                                        random.randint(0, 8)])
+            e.blit_center(main_display, pygame.transform.rotate(turret_barrel_img, -entity[2]),
+                          [entity[0].get_center()[0] - scroll[0], entity[0].get_center()[1] - scroll[1] + 10])
         if (entity[0].type == 'core') and (entity[0].animation_frame > 40):
             if entity[0].animation_frame == 41:
                 for i2 in range(5):
                     rot = math.radians(-random.randint(20, 160))
                     speed = random.randint(1, 3)
-                    particles.append(e.particle(entity[0].x + random.randint(0, entity[0].size_x), entity[0].y + 3, 'p', [math.cos(rot) * speed, math.sin(rot) * speed], 0.07, random.randint(20, 35) / 10, (92, 163, 135)))
-            outline(entity[0].get_current_img(), main_display, [entity[0].x - scroll[0], entity[0].y - scroll[1]], (254, 254, 254))
+                    particles.append(e.particle(entity[0].x + random.randint(0, entity[0].size_x), entity[0].y + 3, 'p',
+                                                [math.cos(rot) * speed, math.sin(rot) * speed], 0.07,
+                                                random.randint(20, 35) / 10, (92, 163, 135)))
+            outline(entity[0].get_current_img(), main_display, [entity[0].x - scroll[0], entity[0].y - scroll[1]],
+                    (254, 254, 254))
         if (entity[0].type == 'core') and (entity[0].animation_frame <= 40) and (entity[0].animation_frame > 10):
-            outline(entity[0].get_current_img(), main_display, [entity[0].x - scroll[0], entity[0].y - scroll[1]], (254, 254, 254))
+            outline(entity[0].get_current_img(), main_display, [entity[0].x - scroll[0], entity[0].y - scroll[1]],
+                    (254, 254, 254))
         entity[0].display(main_display, [scroll[0], scroll[1]])
         if entity[1]:
             if entity[0].type == 'core':
@@ -365,12 +408,17 @@ while True:
                 for i2 in range(30):
                     rot = math.radians(-random.randint(20, 160))
                     speed = random.randint(3, 6)
-                    particles.append(e.particle(entity[0].x + random.randint(0, entity[0].size_x), entity[0].y + 3, 'p', [math.cos(rot) * speed, math.sin(rot) * speed], 0.04, random.randint(20, 35) / 10, (92, 163, 135)))
+                    particles.append(e.particle(entity[0].x + random.randint(0, entity[0].size_x), entity[0].y + 3, 'p',
+                                                [math.cos(rot) * speed, math.sin(rot) * speed], 0.04,
+                                                random.randint(20, 35) / 10, (92, 163, 135)))
             if entity[0].type == 'turret':
                 for i2 in range(40):
                     rot = math.radians(-random.randint(20, 160))
                     speed = random.randint(2, 4)
-                    particles.append(e.particle(entity[0].x + random.randint(0, entity[0].size_x), entity[0].y + random.randint(0, entity[0].size_y), 'p', [math.cos(rot) * speed, math.sin(rot) * speed], 0.03, random.randint(10, 35) / 10, (79, 66, 113)))
+                    particles.append(e.particle(entity[0].x + random.randint(0, entity[0].size_x),
+                                                entity[0].y + random.randint(0, entity[0].size_y), 'p',
+                                                [math.cos(rot) * speed, math.sin(rot) * speed], 0.03,
+                                                random.randint(10, 35) / 10, (79, 66, 113)))
             entities.pop(i)
 
     # Player ------------------------------------------------- #
@@ -395,7 +443,8 @@ while True:
         player.set_flip(True)
     player_movement[0] += player_velocity[0] * dtf(dt) * game_speed
     player_movement[1] += player_velocity[1] * dtf(dt) * game_speed
-    player_velocity = [normalize(player_velocity[0], 0.15 * dtf(dt) * game_speed), normalize(player_velocity[1], 0.15 * dtf(dt) * game_speed)]
+    player_velocity = [normalize(player_velocity[0], 0.15 * dtf(dt) * game_speed),
+                       normalize(player_velocity[1], 0.15 * dtf(dt) * game_speed)]
     if player_movement[1] < -6:
         player_movement[1] = -6
     player_movement[0] = cap(player_movement[0], 14)
@@ -407,7 +456,8 @@ while True:
                   'left': False,
                   'right': False}
     if not dead:
-        if (player.x > scroll[0]) and (player.x < scroll[0] + display.get_width()) and (player.y > scroll[1]) and (player.y <  scroll[1] + display.get_height()):
+        if (player.x > scroll[0]) and (player.x < scroll[0] + display.get_width()) and (player.y > scroll[1]) and (
+                player.y < scroll[1] + display.get_height()):
             collisions = player.move(player_movement, collision_tiles, [])
         elif moved == False:
             player.set_pos(spawnpoint[0] + 4, spawnpoint[1] - 17)
@@ -444,32 +494,43 @@ while True:
         flip = False
     else:
         flip = True
-    rot = -math.degrees(math.atan2(my - (int(player.get_center()[1]) - scroll[1]), mx - (int(player.get_center()[0]) - scroll[0])))
+    rot = -math.degrees(
+        math.atan2(my - (int(player.get_center()[1]) - scroll[1]), mx - (int(player.get_center()[0]) - scroll[0])))
     if not dead:
-        e.blit_center(main_display, pygame.transform.rotate(e.flip(gun_img, False, flip), rot), [int(player.get_center()[0]) - scroll[0], int(player.get_center()[1]) - scroll[1] + 3])
+        e.blit_center(main_display, pygame.transform.rotate(e.flip(gun_img, False, flip), rot),
+                      [int(player.get_center()[0]) - scroll[0], int(player.get_center()[1]) - scroll[1] + 3])
 
     shoot_timer = max(shoot_timer - 1 * dtf(dt) * game_speed, 0)
 
     if click and not dead:
+
         if shoot_timer == 0:
             moved = True
             shoot_s.play()
-            shoot_timer = 50
-            player_velocity[0] -= math.cos(math.radians(-rot)) * 6
-            player_velocity[1] -= math.sin(math.radians(-rot)) * 6
-            bullets.append(['player', [player.get_center()[0], player.get_center()[1] + 3], math.radians(-rot + random.randint(0, 12) - 6), 20])
+            shoot_timer = 1
+            player_velocity[0] -= math.cos(math.radians(-rot)) * 1  # recoil
+            player_velocity[1] -= math.sin(math.radians(-rot)) * 1
+            bullets.append(['player', [player.get_center()[0], player.get_center()[1] + 3],
+                            math.radians(-rot + random.randint(0, 12) - 6), 20])
             for i in range(3):
                 rot_offset = random.randint(0, 50) - 25
-                flashes.append([[player.get_center()[0] + math.cos(math.radians(-rot + rot_offset)) * 4, player.get_center()[1] + math.sin(math.radians(-rot + rot_offset)) * 4], random.randint(10, 30), math.radians(-rot + rot_offset), 8, random.randint(0, 8)])
+                flashes.append([[player.get_center()[0] + math.cos(math.radians(-rot + rot_offset)) * 4,
+                                 player.get_center()[1] + math.sin(math.radians(-rot + rot_offset)) * 4],
+                                random.randint(10, 30), math.radians(-rot + rot_offset), 8, random.randint(0, 8)])
 
     # Bullets ------------------------------------------------ #
     for i, bullet in sorted(list(enumerate(bullets)), reverse=True):
         bullet[1][0] += math.cos(bullet[2]) * bullet[3] * dtf(dt) * game_speed
         bullet[1][1] += math.sin(bullet[2]) * bullet[3] * dtf(dt) * game_speed
+        # if bullet[0] == 'turret' and player.get_distance(bullet[1]) < 24:
+        #     bullet[2] = 0
+
         popped = False
         if bullet[0] == 'turret':
             shot_img = pygame.transform.rotate(turret_shot_img, -math.degrees(bullet[2]))
-            outline(shot_img, main_display, (bullet[1][0] - scroll[0] - int(shot_img.get_width() / 2), bullet[1][1] - scroll[1] - int(shot_img.get_height() / 2)), (254, 254, 254))
+            outline(shot_img, main_display, (bullet[1][0] - scroll[0] - int(shot_img.get_width() / 2),
+                                             bullet[1][1] - scroll[1] - int(shot_img.get_height() / 2)),
+                    (254, 254, 254))
             e.blit_center(main_display, shot_img, (bullet[1][0] - scroll[0], bullet[1][1] - scroll[1]))
             dis = player.get_distance(bullet[1])
             if dis < 24:
@@ -480,22 +541,33 @@ while True:
                         for i2 in range(60):
                             rot = math.radians(random.randint(0, 359))
                             speed = random.randint(3, 6)
-                            particles.append(e.particle(player.x + random.randint(0, player.size_x), player.y + random.randint(0, player.size_y), 'p', [math.cos(rot) * speed, math.sin(rot) * speed], 0.03, random.randint(10, 35) / 10, random.choice([(255, 255, 255), (49, 89, 134), (49, 89, 134), (49, 89, 134), (141, 137, 163)])))
+                            particles.append(e.particle(player.x + random.randint(0, player.size_x),
+                                                        player.y + random.randint(0, player.size_y), 'p',
+                                                        [math.cos(rot) * speed, math.sin(rot) * speed], 0.03,
+                                                        random.randint(10, 35) / 10, random.choice(
+                                    [(255, 255, 255), (49, 89, 134), (49, 89, 134), (49, 89, 134), (141, 137, 163)])))
                         dead = True
-        if bullet[0] == 'player': # type, pos, angle, speed
+        if bullet[0] == 'player':  # type, pos, angle, speed
             dis = int(bullet[3] * dtf(dt) * game_speed) + 1
             for i2 in range(dis):
-                pos = [int((bullet[1][0] - math.cos(bullet[2]) * (dis - i2)) / 16), int((bullet[1][1] - math.sin(bullet[2]) * (dis - i2)) / 16) % map_height]
+                pos = [int((bullet[1][0] - math.cos(bullet[2]) * (dis - i2)) / 16),
+                       int((bullet[1][1] - math.sin(bullet[2]) * (dis - i2)) / 16) % map_height]
                 if xy2str(pos) in tile_map:
                     if tile_map[xy2str(pos)][0] < 14:
                         for i3 in range(12):
                             rot = random.randint(0, 359)
                             speed = random.randint(3, 6)
                             size = random.randint(3, 5)
-                            pos2 = [bullet[1][0] - math.cos(bullet[2]) * (dis - i2), bullet[1][1] - math.sin(bullet[2]) * (dis - i2)]
+                            pos2 = [bullet[1][0] - math.cos(bullet[2]) * (dis - i2),
+                                    bullet[1][1] - math.sin(bullet[2]) * (dis - i2)]
                             bullet_v = [math.cos(bullet[2]) * bullet[3] / 6, math.sin(bullet[2]) * bullet[3] / 6]
-                            explosion_particles.append(['core', pos2.copy(), [math.cos(math.radians(rot)) * speed - bullet_v[0], math.sin(math.radians(rot)) * speed + bullet_v[1]], size, [0, size * 10]])
-                            flashes.append([[bullet[1][0] + math.cos(math.radians(rot)) * 4, bullet[1][1] + math.sin(math.radians(rot)) * 4], random.randint(20, 40), math.radians(rot), 30, random.randint(0, 8)])
+                            explosion_particles.append(['core', pos2.copy(),
+                                                        [math.cos(math.radians(rot)) * speed - bullet_v[0],
+                                                         math.sin(math.radians(rot)) * speed + bullet_v[1]], size,
+                                                        [0, size * 10]])
+                            flashes.append([[bullet[1][0] + math.cos(math.radians(rot)) * 4,
+                                             bullet[1][1] + math.sin(math.radians(rot)) * 4], random.randint(20, 40),
+                                            math.radians(rot), 30, random.randint(0, 8)])
                         bullets.pop(i)
                         popped = True
                         explosion_s.play()
@@ -511,7 +583,10 @@ while True:
                             if entity[0].type == 'core':
                                 point_s.play()
             if not popped:
-                pygame.draw.line(main_display, (255, 255, 255), (bullet[1][0] - scroll[0], bullet[1][1] - scroll[1]), (bullet[1][0] + math.cos(bullet[2]) * 6 - scroll[0], bullet[1][1] + math.sin(bullet[2]) * 6 - scroll[1]), 2)
+                pygame.draw.line(main_display, (255, 255, 255), (bullet[1][0] - scroll[0], bullet[1][1] - scroll[1]), (
+                    bullet[1][0] + math.cos(bullet[2]) * 6 - scroll[0],
+                    bullet[1][1] + math.sin(bullet[2]) * 6 - scroll[1]),
+                                 2)
         if not popped:
             if (abs(bullet[1][0] - player.get_center()[0]) > 300) or (abs(bullet[1][1] - player.get_center()[1]) > 300):
                 bullets.pop(i)
@@ -545,9 +620,11 @@ while True:
         length = flash[1] * ((12 - flash[4]) / 12)
         points = [
             [flash[0][0] + math.cos(flash[2]) * length, flash[0][1] + math.sin(flash[2]) * length],
-            [flash[0][0] + math.cos(flash[2] + math.pi / 2) * length * 0.15, flash[0][1] + math.sin(flash[2] + math.pi / 2) * length * 0.15],
+            [flash[0][0] + math.cos(flash[2] + math.pi / 2) * length * 0.15,
+             flash[0][1] + math.sin(flash[2] + math.pi / 2) * length * 0.15],
             [flash[0][0] - math.cos(flash[2]) * length * 0.3, flash[0][1] - math.sin(flash[2]) * length * 0.3],
-            [flash[0][0] + math.cos(flash[2] - math.pi / 2) * length * 0.15, flash[0][1] + math.sin(flash[2] - math.pi / 2) * length * 0.15],
+            [flash[0][0] + math.cos(flash[2] - math.pi / 2) * length * 0.15,
+             flash[0][1] + math.sin(flash[2] - math.pi / 2) * length * 0.15],
         ]
         for point in points:
             point[0] -= scroll[0]
@@ -561,9 +638,11 @@ while True:
     # type, pos, velocity, size, [timer, duration]
     for i, explosion_particle in sorted(list(enumerate(explosion_particles)), reverse=True):
         if explosion_particle[0] == '3rd':
-            size = (explosion_particle[4][1] - explosion_particle[4][0]) / explosion_particle[4][1] * explosion_particle[3]
+            size = (explosion_particle[4][1] - explosion_particle[4][0]) / explosion_particle[4][1] * \
+                   explosion_particle[3]
             if explosion_particle[4][0] > 2:
-                pygame.draw.circle(main_display, (141, 137, 163), (explosion_particle[1][0] - scroll[0], explosion_particle[1][1] - scroll[1]), size)
+                pygame.draw.circle(main_display, (141, 137, 163),
+                                   (explosion_particle[1][0] - scroll[0], explosion_particle[1][1] - scroll[1]), size)
         if explosion_particle[0] == 'core':
             explosion_particle[1][0] += explosion_particle[2][0] * dtf(dt) * game_speed
             pos = [int(explosion_particle[1][0] / 16), int(explosion_particle[1][1] / 16) % map_height]
@@ -578,12 +657,15 @@ while True:
             explosion_particle[2][1] += 0.3 * dtf(dt) * game_speed
             explosion_particle[2][1] = min(explosion_particle[2][1], 5)
             size = (explosion_particle[4][1] - explosion_particle[4][0]) / 10
-            pygame.draw.circle(main_display, (255, 255, 255), (explosion_particle[1][0] - scroll[0], explosion_particle[1][1] - scroll[1]), size)
+            pygame.draw.circle(main_display, (255, 255, 255),
+                               (explosion_particle[1][0] - scroll[0], explosion_particle[1][1] - scroll[1]), size)
             if random.randint(1, 2) == 1:
-                explosion_particles.append(['3rd', explosion_particle[1].copy(), [0, 0], size + 1,  [0, 16]])
+                explosion_particles.append(['3rd', explosion_particle[1].copy(), [0, 0], size + 1, [0, 16]])
             if explosion_particle[4][0] < 12:
                 if random.randint(1, 3) == 1:
-                    explosion_particles.append(['2nd', explosion_particle[1].copy(), [(random.randint(0, 20) / 10 - 1), 0], random.randint(8, 16), [0, (30 + random.randint(0, 10) - explosion_particle[4][0] * 2.5+ 2)]])
+                    explosion_particles.append(
+                        ['2nd', explosion_particle[1].copy(), [(random.randint(0, 20) / 10 - 1), 0],
+                         random.randint(8, 16), [0, (30 + random.randint(0, 10) - explosion_particle[4][0] * 2.5 + 2)]])
         if explosion_particle[0] == '2nd':
             explosion_particle[2][1] -= 0.2 * dtf(dt) * game_speed
             explosion_particle[2][1] = max(explosion_particle[2][1], -2 * (size / 8))
@@ -592,11 +674,13 @@ while True:
             if explosion_particle[4][0] < 4:
                 size = explosion_particle[3] * (explosion_particle[4][0] / 4)
             else:
-                size = explosion_particle[3] * ((explosion_particle[4][1] - explosion_particle[4][0]) / explosion_particle[4][1])
+                size = explosion_particle[3] * (
+                        (explosion_particle[4][1] - explosion_particle[4][0]) / explosion_particle[4][1])
             if explosion_particle[4][0] > 20:
                 explosion_particle[4][0] -= dtf(dt) * game_speed * 0.5
             color_offset = (explosion_particle[4][0] / explosion_particle[4][1]) * 30 * (1 + explosion_particle[3] / 8)
-            pygame.draw.circle(main_display, (255 - color_offset * 1.1, 255 - color_offset * 1.2, 255 - color_offset), (explosion_particle[1][0] - scroll[0], explosion_particle[1][1] - scroll[1]), size)
+            pygame.draw.circle(main_display, (255 - color_offset * 1.1, 255 - color_offset * 1.2, 255 - color_offset),
+                               (explosion_particle[1][0] - scroll[0], explosion_particle[1][1] - scroll[1]), size)
         explosion_particle[4][0] += dtf(dt) * game_speed
         if explosion_particle[4][0] >= explosion_particle[4][1]:
             explosion_particles.pop(i)
@@ -612,16 +696,21 @@ while True:
                 main_display.blit(controls_1, (player.x - scroll[0] - 17, player.y - scroll[1] - 22))
             else:
                 main_display.blit(controls_2, (player.x - scroll[0] - 17, player.y - scroll[1] - 22))
-        text.show_text('shoot', 150 - int(get_text_width('shoot', 1) / 2), 35, 1, 9999, font, main_display)
+        text.show_text('Finish the level in less than 1 second!',
+                       150 - int(get_text_width('Finish the level in less than 1 second!', 1) / 2), 35, 1, 9999, font,
+                       main_display)
         main_display.blit(core_img, (145, 47))
     if level == 2:
-        text.show_text('drop to loop around', 150 - int(get_text_width('drop to loop around', 1) / 2), 45, 1, 9999, font, main_display)
+        text.show_text('drop to loop around', 150 - int(get_text_width('drop to loop around', 1) / 2), 45, 1, 9999,
+                       font, main_display)
     if level == 3:
-        text.show_text('shoot    avoid', 150 - int(get_text_width('shoot    avoid', 1) / 2), 45, 1, 9999, font, main_display)
+        text.show_text('shoot    avoid', 150 - int(get_text_width('shoot    avoid', 1) / 2), 45, 1, 9999, font,
+                       main_display)
         main_display.blit(turret_example_img, (122, 57))
         main_display.blit(shot_example_img, (163, 57))
     if dead:
-        text.show_text('click to restart', 150 - int(get_text_width('click to restart', 1) / 2), 97, 1, 9999, font, main_display)
+        text.show_text('click to restart', 150 - int(get_text_width('click to restart', 1) / 2), 97, 1, 9999, font,
+                       main_display)
         if click:
             dead = False
             tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
@@ -639,9 +728,9 @@ while True:
             bar_height = 100
             moved = False
             player_velocity = [0, 0]
-    
+
     # Buttons ------------------------------------------------ #
-    click = False
+    # click = False
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -660,8 +749,10 @@ while True:
                     jumps -= 1
                     player_grav = -5
                     player.set_action('jump')
-                    particles.append(e.particle(player.x, player.y + player.size_y, 'p', [-1, 2], 0.5, 2, (255, 255, 255), False))
-                    particles.append(e.particle(player.x + player.size_x, player.y + player.size_y, 'p', [1, 2], 0.5, 2, (255, 255, 255), False))
+                    particles.append(
+                        e.particle(player.x, player.y + player.size_y, 'p', [-1, 2], 0.5, 2, (255, 255, 255), False))
+                    particles.append(e.particle(player.x + player.size_x, player.y + player.size_y, 'p', [1, 2], 0.5, 2,
+                                                (255, 255, 255), False))
                     jump_s.play()
             if event.key == K_SPACE:
                 if jumps > 0:
@@ -669,9 +760,12 @@ while True:
                     jumps -= 1
                     player_grav = -5
                     player.set_action('jump')
-                    particles.append(e.particle(player.x, player.y + player.size_y, 'p', [-1, 2], 0.5, 2, (255, 255, 255), False))
-                    particles.append(e.particle(player.x + player.size_x, player.y + player.size_y, 'p', [1, 2], 0.5, 2, (255, 255, 255), False))
+                    particles.append(
+                        e.particle(player.x, player.y + player.size_y, 'p', [-1, 2], 0.5, 2, (255, 255, 255), False))
+                    particles.append(e.particle(player.x + player.size_x, player.y + player.size_y, 'p', [1, 2], 0.5, 2,
+                                                (255, 255, 255), False))
                     jump_s.play()
+
         if event.type == KEYUP:
             if event.key == K_d:
                 right = False
@@ -680,7 +774,18 @@ while True:
         if event.type == MOUSEBUTTONDOWN:
             if event.button == 1:
                 click = True
+            if event.button == 2:
+                dead = True
+            if event.button == 3:
+                frozen = True
+        if event.type == MOUSEBUTTONUP:
+            if event.button == 1:
+                click = False
+            if event.button == 3:
+                frozen = False
 
+    if frozen:
+        game_speed = 0
     # Bars --------------------------------------------------- #
     bar_surf = pygame.Surface((display.get_width(), bar_height))
     bar_surf.fill((8, 5, 8))
@@ -689,14 +794,15 @@ while True:
 
     # Background Effect -------------------------------------- #
     mask = pygame.mask.from_surface(main_display)
-    mask_surf = mask.to_surface(setcolor=(8,5,8))
-    mask_surf.set_colorkey((0,0,0))
+    mask_surf = mask.to_surface(setcolor=(8, 5, 8))
+    mask_surf.set_colorkey((0, 0, 0))
     display.blit(mask_surf, (2, 2))
     display.blit(main_display, (0, 0))
-    
+
     # Update ------------------------------------------------- #
     if win == 0:
-        screen.blit(pygame.transform.scale(display, (900 + int(bar_height * 3), 600 + int(bar_height * 3))), (-6 - int(bar_height * 1.5), -6 - int(bar_height * 1.5)))
+        screen.blit(pygame.transform.scale(display, (900 + int(bar_height * 3), 600 + int(bar_height * 3))),
+                    (-6 - int(bar_height * 1.5), -6 - int(bar_height * 1.5)))
     else:
         screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
     # UI ----------------------------------------------------- #
@@ -704,14 +810,29 @@ while True:
     text.show_text('level ' + str(level), 3, 12, 1, 9999, font, screen, 3)
     screen.blit(pygame.transform.scale(core_img, (33, 36)), (9, 61))
     text.show_text(str(total_cores - cores_left) + '/' + str(total_cores), 16, 23, 1, 9999, font, screen, 3)
-    #text.show_text(str(current_fps) + 'fps', 3, 35, 1, 9999, font, screen, 3)
+    # text.show_text(str(current_fps) + 'fps', 3, 35, 1, 9999, font, screen, 3)
     # Update ------------------------------------------------- #
     pygame.display.update()
     current_fps = int(fps.get_framerate())
     mainClock.tick(60)
 
+
+conn = sql.connect('scores.db')
+cursor = conn.cursor()
+
+name = "Temp" if len(argv) < 1 else argv[1]
+
+cursor.execute('''CREATE TABLE IF NOT EXISTS scores (name text, time real);''')
+
+s_query = f'''INSERT INTO scores (name,time) VALUES ('{name}','{total_time}'); '''
+
+print(s_query)
+cursor.execute(s_query)
+conn.commit()
+conn.close()
+
 while True:
-    display.fill((34,23,36))
+    display.fill((34, 23, 36))
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -720,9 +841,11 @@ while True:
             if event.key == K_ESCAPE:
                 pygame.quit()
                 sys.exit()
+
     text.show_text('You Win!', 150 - get_text_width('You Win!', 1) / 2, 90, 1, 9999, font, display)
-    text.show_text(convert_time(total_time), 150 - get_text_width(convert_time(total_time), 1) / 2, 100, 1, 9999, font, display)
+    text.show_text(convert_time(total_time), 150 - get_text_width(convert_time(total_time), 1) / 2, 100, 1, 9999, font,
+                   display)
+
     screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
     pygame.display.update()
     mainClock.tick(60)
-    
