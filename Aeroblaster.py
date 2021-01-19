@@ -12,8 +12,12 @@ mainClock = pygame.time.Clock()
 from pygame.locals import *
 pygame.init()
 pygame.display.set_caption('Aeroblaster')
+<<<<<<< Updated upstream
 screen = pygame.display.set_mode((894, 594),0,32)
 
+=======
+screen = pygame.display.set_mode((894, 594), 0, 32)
+>>>>>>> Stashed changes
 pygame.mouse.set_visible(False)
 
 display = pygame.Surface((300, 200))
