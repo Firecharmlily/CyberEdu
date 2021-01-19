@@ -50,17 +50,17 @@
   </component>
   <component name="RunManager">
     <configuration name="Aeroblaster" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="CyberEdu" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="C:\Users\Hussein Okasha\AppData\Local\Programs\Python\Python38-32\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Aeroblaster.py" />
       <option name="PARAMETERS" value="invisible" />
@@ -122,25 +122,25 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="877" y="315" key="#com.intellij.ide.macro.MacrosDialog/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1610724481196" />
-    <state width="1899" height="282" key="GridCell.Tab.0.bottom" timestamp="1610748497445">
+    <state width="1899" height="282" key="GridCell.Tab.0.bottom" timestamp="1611076908168">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1610748497445" />
+    <state width="1899" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1611076908168" />
     <state width="2517" height="404" key="GridCell.Tab.0.bottom/0.0.2560.1410/-1920.502.1920.1050@0.0.2560.1410" timestamp="1606077675633" />
-    <state width="1899" height="282" key="GridCell.Tab.0.center" timestamp="1610748497445">
+    <state width="1899" height="282" key="GridCell.Tab.0.center" timestamp="1611076908168">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1610748497445" />
+    <state width="1899" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1611076908168" />
     <state width="2517" height="404" key="GridCell.Tab.0.center/0.0.2560.1410/-1920.502.1920.1050@0.0.2560.1410" timestamp="1606077675633" />
-    <state width="1899" height="282" key="GridCell.Tab.0.left" timestamp="1610748497445">
+    <state width="1899" height="282" key="GridCell.Tab.0.left" timestamp="1611076908168">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1610748497445" />
+    <state width="1899" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1611076908168" />
     <state width="2517" height="404" key="GridCell.Tab.0.left/0.0.2560.1410/-1920.502.1920.1050@0.0.2560.1410" timestamp="1606077675633" />
-    <state width="1899" height="282" key="GridCell.Tab.0.right" timestamp="1610748497445">
+    <state width="1899" height="282" key="GridCell.Tab.0.right" timestamp="1611076908168">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1610748497445" />
+    <state width="1899" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1611076908168" />
     <state width="2517" height="404" key="GridCell.Tab.0.right/0.0.2560.1410/-1920.502.1920.1050@0.0.2560.1410" timestamp="1606077675633" />
   </component>
 </project>
