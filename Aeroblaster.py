@@ -26,10 +26,12 @@ e.set_global_colorkey((0, 0, 0))
 e.load_animations('data/images/entities/')
 e.load_particle_images('data/images/particles/')
 
+
 def load_img(name):
     img = pygame.image.load('data/images/' + name + '.png').convert()
     img.set_colorkey((0, 0, 0))
     return img
+
 
 gun_img = load_img('gun')
 cursor_img = load_img('cursor')
@@ -40,6 +42,7 @@ turret_example_img = load_img('turret_example')
 shot_example_img = load_img('shot_example')
 controls_1 = load_img('controls_1')
 controls_2 = load_img('controls_2')
+pause_menu = load_img('pause_menu')
 
 # Sound ------------------------------------------------------ #
 jump_s = pygame.mixer.Sound('data/sfx/jump.wav')
@@ -59,6 +62,7 @@ font_dat = {'A':[3],'B':[3],'C':[3],'D':[3],'E':[3],'F':[3],'G':[3],'H':[3],'I':
           '0':[3],'1':[3],'2':[3],'3':[3],'4':[3],'5':[3],'6':[3],'7':[3],'8':[3],'9':[3],
           '(':[2],')':[2],'/':[3],'_':[5],'=':[3],'\\':[3],'[':[2],']':[2],'*':[3],'"':[3],'<':[3],'>':[3],';':[1]}
 
+
 def get_text_width(text,spacing, font_dat=font_dat):
     width = 0
     for char in text:
@@ -67,6 +71,7 @@ def get_text_width(text,spacing, font_dat=font_dat):
         elif char == ' ':
             width += font_dat['A'][0] + spacing
     return width
+
 
 font = text.generate_font('data/font/small_font.png',font_dat,5,8,(255, 255, 255))
 
@@ -77,12 +82,14 @@ entity_info = {
     15 : [13, 4, 'turret', 0, 0],
     }
 
+
 def convert_time(ms):
     final_m = int(ms / 60000)
     final_s = int((ms - final_m * 60000) / 1000)
     final_ms = int(ms - final_m * 60000 - final_s * 1000)
     return str(final_m) + ':' + str(final_s) + '.' + str(final_ms)
-    
+
+
 def normalize(val, rate):
     if val > rate:
         val -= rate
@@ -92,6 +99,7 @@ def normalize(val, rate):
         val = 0
     return val
 
+
 def cap(val, val2):
     if val > val2:
         val = val2
@@ -99,11 +107,14 @@ def cap(val, val2):
         val = -val2
     return val
 
+
 def dtf(dt):
     return dt / 1000 * 60
 
+
 def xy2str(pos):
     return str(pos[0]) + ';' + str(pos[1])
+
 
 def load_level(number):
     f = open('data/levels/level_' + str(number) + '.txt', 'r')
@@ -143,6 +154,7 @@ def load_level(number):
 
     limits = [limits[0] * 16, limits[1] * 16]
     return final_tile_map, entities, max_height - min_height + 1, spawnpoint, total_cores, limits
+
 
 top_tile_list = [9, 10, 11, 12, 13]
 
@@ -196,9 +208,11 @@ pygame.mixer.music.set_volume(0.5)
 
 shoot_s_cooldown = 1000
 
+paused = False
+
 # Loop ------------------------------------------------------- #
 while True:
-    
+
     # Background --------------------------------------------- #
     dt = pygame.time.get_ticks() - last_frame
     last_frame = pygame.time.get_ticks()
@@ -610,6 +624,7 @@ while True:
             controls_timer = (controls_timer + 1) % 50
             if controls_timer <= 42:
                 main_display.blit(controls_1, (player.x - scroll[0] - 17, player.y - scroll[1] - 22))
+                #main_display.blit(pause_menu, (30, 25))
             else:
                 main_display.blit(controls_2, (player.x - scroll[0] - 17, player.y - scroll[1] - 22))
         text.show_text('shoot', 150 - int(get_text_width('shoot', 1) / 2), 35, 1, 9999, font, main_display)
@@ -650,6 +665,8 @@ while True:
             if event.key == K_ESCAPE:
                 pygame.quit()
                 sys.exit()
+            if event.key == K_p:
+                paused = True
             if event.key == K_d:
                 right = True
             if event.key == K_a:
@@ -709,6 +726,28 @@ while True:
     pygame.display.update()
     current_fps = int(fps.get_framerate())
     mainClock.tick(60)
+
+    while paused:
+        screen.blit(pause_menu, (325, 150))
+        mx2, my2 = pygame.mouse.get_pos()
+        mx2 = int(mx / 3)
+        my2 = int(my / 3)
+        e.blit_center(main_display, cursor_img, (mx2, my2))
+        pygame.display.update()
+        for ev in pygame.event.get():
+            if ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_p:
+                    paused = False
+                    last_frame = pygame.time.get_ticks()
+                if ev.key == K_d:
+                    right = True
+                if ev.key == K_a:
+                    left = True
+            if ev.type == KEYUP:
+                if ev.key == K_d:
+                    right = False
+                if ev.key == K_a:
+                    left = False
 
 while True:
     display.fill((34,23,36))
