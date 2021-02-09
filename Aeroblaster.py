@@ -6,6 +6,8 @@ import data.fps as fps
 import data.text as text
 import data.engine as e
 from data.outline import perfect_outline as outline
+from data.engine import load_img
+from data.engine import get_text_width
 
 # Setup pygame/window ---------------------------------------- #
 mainClock = pygame.time.Clock()
@@ -27,10 +29,7 @@ e.load_animations('data/images/entities/')
 e.load_particle_images('data/images/particles/')
 
 
-def load_img(name):
-    img = pygame.image.load('data/images/' + name + '.png').convert()
-    img.set_colorkey((0, 0, 0))
-    return img
+font = text.generate_font('data/font/small_font.png',e.font_dat,5,8,(255, 255, 255))
 
 
 gun_img = load_img('gun')
@@ -55,25 +54,7 @@ jump_s.set_volume(0.4)
 shoot_s.set_volume(0.3)
 turret_shoot_s.set_volume(0.6)
 
-# Font ------------------------------------------------------- #
-font_dat = {'A':[3],'B':[3],'C':[3],'D':[3],'E':[3],'F':[3],'G':[3],'H':[3],'I':[3],'J':[3],'K':[3],'L':[3],'M':[5],'N':[3],'O':[3],'P':[3],'Q':[3],'R':[3],'S':[3],'T':[3],'U':[3],'V':[3],'W':[5],'X':[3],'Y':[3],'Z':[3],
-          'a':[3],'b':[3],'c':[3],'d':[3],'e':[3],'f':[3],'g':[3],'h':[3],'i':[1],'j':[2],'k':[3],'l':[3],'m':[5],'n':[3],'o':[3],'p':[3],'q':[3],'r':[2],'s':[3],'t':[3],'u':[3],'v':[3],'w':[5],'x':[3],'y':[3],'z':[3],
-          '.':[1],'-':[3],',':[2],':':[1],'+':[3],'\'':[1],'!':[1],'?':[3],
-          '0':[3],'1':[3],'2':[3],'3':[3],'4':[3],'5':[3],'6':[3],'7':[3],'8':[3],'9':[3],
-          '(':[2],')':[2],'/':[3],'_':[5],'=':[3],'\\':[3],'[':[2],']':[2],'*':[3],'"':[3],'<':[3],'>':[3],';':[1]}
 
-
-def get_text_width(text,spacing, font_dat=font_dat):
-    width = 0
-    for char in text:
-        if char in font_dat:
-            width += font_dat[char][0] + spacing
-        elif char == ' ':
-            width += font_dat['A'][0] + spacing
-    return width
-
-
-font = text.generate_font('data/font/small_font.png',font_dat,5,8,(255, 255, 255))
 
 # Other ------------------------------------------------------ #
 
@@ -624,7 +605,6 @@ while True:
             controls_timer = (controls_timer + 1) % 50
             if controls_timer <= 42:
                 main_display.blit(controls_1, (player.x - scroll[0] - 17, player.y - scroll[1] - 22))
-                #main_display.blit(pause_menu, (30, 25))
             else:
                 main_display.blit(controls_2, (player.x - scroll[0] - 17, player.y - scroll[1] - 22))
         text.show_text('shoot', 150 - int(get_text_width('shoot', 1) / 2), 35, 1, 9999, font, main_display)
@@ -733,7 +713,7 @@ while True:
         mx2 = int(mx / 3)
         my2 = int(my / 3)
         e.blit_center(main_display, cursor_img, (mx2, my2))
-        pygame.display.update()
+
         for ev in pygame.event.get():
             if ev.type == pygame.KEYDOWN:
                 if ev.key == pygame.K_p:
@@ -748,6 +728,8 @@ while True:
                     right = False
                 if ev.key == K_a:
                     left = False
+        pygame.display.update()
+        mainClock.tick(60)
 
 while True:
     display.fill((34,23,36))
