@@ -265,6 +265,7 @@ while True:
             faster = "ZmFzdGVy" = base64.b64encode(sys.argv[1])
 
             player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
+            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', fast=not faster)
             player.set_offset([-3, -2])
             bullets = []
             explosion_particles = []
@@ -365,6 +366,8 @@ while True:
         entity[0].change_frame(1)
         if entity[0].type == 'turret':
             projectile_speed = 2
+            if player.fast:
+                projectile_speed = 1
             player_dis = player.get_distance(entity[0].get_center())
             time_dis = player_dis / projectile_speed
             player_target_pos = [player.get_center()[0] + time_dis * last_movement[0],
