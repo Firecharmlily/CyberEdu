@@ -15,22 +15,20 @@ pygame.display.set_caption('Aeroblaster')
 screen = pygame.display.set_mode((894, 594),0,32)
 screen = pygame.display.set_mode((894, 594), 0, 32)
 pygame.mouse.set_visible(False)
-
 display = pygame.Surface((300, 200))
 main_display = display.copy()
 main_display.set_colorkey((0,0,0))
+
 # Images ----------------------------------------------------- #
 tileset_images = load_tileset('data/images/')
 e.set_global_colorkey((0, 0, 0))
 e.load_animations('data/images/entities/')
 e.load_particle_images('data/images/particles/')
 
-
 def load_img(name):
     img = pygame.image.load('data/images/' + name + '.png').convert()
     img.set_colorkey((0, 0, 0))
     return img
-
 
 gun_img = load_img('gun')
 cursor_img = load_img('cursor')
@@ -52,6 +50,7 @@ death_s = pygame.mixer.Sound('data/sfx/death.wav')
 jump_s.set_volume(0.4)
 shoot_s.set_volume(0.3)
 turret_shoot_s.set_volume(0.6)
+
 # Font ------------------------------------------------------- #
 font_dat = {'A':[3],'B':[3],'C':[3],'D':[3],'E':[3],'F':[3],'G':[3],'H':[3],'I':[3],'J':[3],'K':[3],'L':[3],'M':[5],'N':[3],'O':[3],'P':[3],'Q':[3],'R':[3],'S':[3],'T':[3],'U':[3],'V':[3],'W':[5],'X':[3],'Y':[3],'Z':[3],
           'a':[3],'b':[3],'c':[3],'d':[3],'e':[3],'f':[3],'g':[3],'h':[3],'i':[1],'j':[2],'k':[3],'l':[3],'m':[5],'n':[3],'o':[3],'p':[3],'q':[3],'r':[2],'s':[3],'t':[3],'u':[3],'v':[3],'w':[5],'x':[3],'y':[3],'z':[3],
@@ -105,6 +104,9 @@ def dtf(dt):
 def xy2str(pos):
     return str(pos[0]) + ';' + str(pos[1])
 
+def setDead(self, dead):
+    dead=state
+
 def load_level(number):
     f = open('data/levels/level_' + str(number) + '.txt', 'r')
     dat = f.read()
@@ -144,7 +146,53 @@ def load_level(number):
     limits = [limits[0] * 16, limits[1] * 16]
     return final_tile_map, entities, max_height - min_height + 1, spawnpoint, total_cores, limits
 
-def bullet_game(dead):
+
+# Initilize variables-------------------------------
+
+top_tile_list = [9, 10, 11, 12, 13]
+level = 1
+tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
+current_fps = 0
+dt = 0 # delta time
+last_frame = pygame.time.get_ticks()
+game_speed = 1
+player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
+player.set_offset([-3, -2])
+player_grav = 0
+jumps = 2
+player_speed = 2
+air_timer = 0
+last_movement = [0, 0]
+shoot_timer = 0
+total_time = 0
+level_time = 0
+win = 0
+dead = False
+moved = False
+player_velocity = [0, 0]
+bullets = []
+explosion_particles = []
+particles = []
+circle_effects = []
+flashes = []
+camera_sources = []
+bar_height = 100
+left = False
+right = False
+click = False
+background_timer = 0
+scroll_target = [player.get_center()[0] - 150, player.get_center()[1] - 100]
+scroll = scroll_target.copy()
+true_scroll = scroll.copy()
+controls_timer = 0
+pygame.mixer.music.load('data/music.wav')
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.5)
+shoot_s_cooldown = 1000
+
+#Game Methods--------------------------------
+def bullet_game():
+    global dead
     for i, bullet in sorted(list(enumerate(bullets)), reverse=True):
         bullet[1][0] += math.cos(bullet[2]) * bullet[3] * dtf(dt) * game_speed
         bullet[1][1] += math.sin(bullet[2]) * bullet[3] * dtf(dt) * game_speed
@@ -197,60 +245,6 @@ def bullet_game(dead):
         if not popped:
             if (abs(bullet[1][0] - player.get_center()[0]) > 300) or (abs(bullet[1][1] - player.get_center()[1]) > 300):
                 bullets.pop(i)
-
-
-
-top_tile_list = [9, 10, 11, 12, 13]
-
-level = 1
-tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
-
-current_fps = 0
-dt = 0 # delta time
-last_frame = pygame.time.get_ticks()
-game_speed = 1
-
-player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
-player.set_offset([-3, -2])
-player_grav = 0
-jumps = 2
-player_speed = 2
-air_timer = 0
-last_movement = [0, 0]
-shoot_timer = 0
-dead = False
-total_time = 0
-level_time = 0
-win = 0
-moved = False
-player_velocity = [0, 0]
-
-bullets = []
-explosion_particles = []
-particles = []
-circle_effects = []
-flashes = []
-
-camera_sources = []
-bar_height = 100
-
-left = False
-right = False
-click = False
-
-background_timer = 0
-
-scroll_target = [player.get_center()[0] - 150, player.get_center()[1] - 100]
-scroll = scroll_target.copy()
-true_scroll = scroll.copy()
-
-controls_timer = 0
-
-pygame.mixer.music.load('data/music.wav')
-pygame.mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.5)
-
-shoot_s_cooldown = 1000
 
 # Loop ------------------------------------------------------- #
 while True:
@@ -429,7 +423,7 @@ while True:
                     particles.append(e.particle(entity[0].x + random.randint(0, entity[0].size_x), entity[0].y + random.randint(0, entity[0].size_y), 'p', [math.cos(rot) * speed, math.sin(rot) * speed], 0.03, random.randint(10, 35) / 10, (79, 66, 113)))
             entities.pop(i)
 
-    # Player Movement------------------------------------------------- #
+    # Player Movement & life status------------------------------------------------- #
     player_movement = [0, 0]
     player_grav += 0.3 * dtf(dt) * game_speed
     player_grav = min(3, player_grav)
@@ -451,7 +445,8 @@ while True:
         player.set_flip(True)
     player_movement[0] += player_velocity[0] * dtf(dt) * game_speed
     player_movement[1] += player_velocity[1] * dtf(dt) * game_speed
-    player_velocity = [normalize(player_velocity[0], 0.15 * dtf(dt) * game_speed), normalize(player_velocity[1], 0.15 * dtf(dt) * game_speed)]
+    player_velocity = [normalize(player_velocity[0], 0.15 * dtf(dt) * game_speed),
+                       normalize(player_velocity[1], 0.15 * dtf(dt) * game_speed)]
     if player_movement[1] < -6:
         player_movement[1] = -6
     player_movement[0] = cap(player_movement[0], 14)
@@ -462,9 +457,10 @@ while True:
                   'top': False,
                   'left': False,
                   'right': False}
-    #Player Life Status ---------------------
+    # Player Life Status ---------------------
     if not dead:
-        if (player.x > scroll[0]) and (player.x < scroll[0] + display.get_width()) and (player.y > scroll[1]) and (player.y <  scroll[1] + display.get_height()):
+        if (player.x > scroll[0]) and (player.x < scroll[0] + display.get_width()) and (player.y > scroll[1]) and (
+                player.y < scroll[1] + display.get_height()):
             collisions = player.move(player_movement, collision_tiles, [])
         elif moved == False:
             player.set_pos(spawnpoint[0] + 4, spawnpoint[1] - 17)
@@ -496,6 +492,7 @@ while True:
 
     scroll_target = [player.get_center()[0], player.get_center()[1]]
 
+
     # Gun ---------------------------------------------------- #
     if mx > player.x - scroll[0]:
         flip = False
@@ -520,7 +517,7 @@ while True:
                 flashes.append([[player.get_center()[0] + math.cos(math.radians(-rot + rot_offset)) * 4, player.get_center()[1] + math.sin(math.radians(-rot + rot_offset)) * 4], random.randint(10, 30), math.radians(-rot + rot_offset), 8, random.randint(0, 8)])
 
     # Bullets ------------------------------------------------ #
-    bullet_game(dead)
+    bullet_game()
     # Other Particles ---------------------------------------- #
     for i, particle in sorted(list(enumerate(particles)), reverse=True):
         if particle.physics:
