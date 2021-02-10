@@ -262,10 +262,9 @@ while True:
                 break
 
             invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
-            faster = "ZmFzdGVy" = base64.b64encode(sys.argv[1])
+            faster = "ZmFzdGVy" == "".join(base64.b64encode(sys.argv[1]))
 
-            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
-            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', fast=not faster)
+            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible, fast=not faster)
             player.set_offset([-3, -2])
             bullets = []
             explosion_particles = []
