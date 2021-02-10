@@ -9,6 +9,8 @@ from data.outline import perfect_outline as outline
 from sys import argv
 
 import sqlite3 as sql
+import base64
+#ZmFzdGVy
 
 # Setup pygame/window ---------------------------------------- #
 mainClock = pygame.time.Clock()
@@ -260,6 +262,7 @@ while True:
                 break
 
             invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
+            faster = "ZmFzdGVy" = base64.b64encode(sys.argv[1])
 
             player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
             player.set_offset([-3, -2])
