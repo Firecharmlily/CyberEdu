@@ -136,7 +136,7 @@ def blit_center(surf,surf2,pos):
 class entity(object):
     global animation_database, animation_higher_database
    
-    def __init__(self,x,y,size_x,size_y,e_type): # x, y, size_x, size_y, type
+    def __init__(self,x,y,size_x,size_y,e_type, visible=True): # x, y, size_x, size_y, type
         self.x = x
         self.y = y
         self.original_y = y
@@ -157,6 +157,7 @@ class entity(object):
         self.set_action('idle') # overall action for the entity
         self.entity_data = {}
         self.alpha = None
+        self.visible = visible
  
     def set_pos(self,x,y):
         self.x = x

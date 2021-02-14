@@ -57,7 +57,7 @@ while True:
     if startx + start_width > mx > startx and starty + start_height > my > starty:
         display.fill((104, 93, 106), (startx, starty, start_width, start_height))
         if click[0] == 1:
-            sys.argv = [name]
+            sys.argv = ["text", name]
             exec(open("Aeroblaster.py").read())
     text.show_text('start', startx + 8, starty + 5, 1, 9999, font, display, 2)
 
