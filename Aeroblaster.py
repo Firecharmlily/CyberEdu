@@ -29,7 +29,7 @@ e.load_animations('data/images/entities/')
 e.load_particle_images('data/images/particles/')
 
 
-font = text.generate_font('data/font/small_font.png',e.font_dat,5,8,(255, 255, 255))
+font = text.generate_font('data/font/small_font.png', e.font_dat, 5, 8, (255, 255, 255))
 
 
 gun_img = load_img('gun')
@@ -712,7 +712,7 @@ while True:
         mx2, my2 = pygame.mouse.get_pos()
         mx2 = int(mx / 3)
         my2 = int(my / 3)
-        e.blit_center(main_display, cursor_img, (mx2, my2))
+        e.blit_center(screen, cursor_img, (mx2, my2))
 
         for ev in pygame.event.get():
             if ev.type == pygame.KEYDOWN:
