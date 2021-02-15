@@ -6,8 +6,10 @@ import data.fps as fps
 import data.text as text
 import data.engine as e
 from data.outline import perfect_outline as outline
-from sys import argv
 
+from data.engine import load_img
+from data.engine import get_text_width
+from sys import argv
 import sqlite3 as sql
 
 # Setup pygame/window ---------------------------------------- #
@@ -31,12 +33,6 @@ e.load_animations('data/images/entities/')
 e.load_particle_images('data/images/particles/')
 
 
-def load_img(name):
-    img = pygame.image.load('data/images/' + name + '.png').convert()
-    img.set_colorkey((0, 0, 0))
-    return img
-
-
 gun_img = load_img('gun')
 cursor_img = load_img('cursor')
 turret_barrel_img = load_img('turret_barrel')
@@ -46,6 +42,7 @@ turret_example_img = load_img('turret_example')
 shot_example_img = load_img('shot_example')
 controls_1 = load_img('controls_1')
 controls_2 = load_img('controls_2')
+pause_menu = load_img('pause_menu')
 
 # Sound ------------------------------------------------------ #
 jump_s = pygame.mixer.Sound('data/sfx/jump.wav')
@@ -58,30 +55,7 @@ jump_s.set_volume(0.4)
 shoot_s.set_volume(0.3)
 turret_shoot_s.set_volume(0.6)
 
-# Font ------------------------------------------------------- #
-font_dat = {'A': [3], 'B': [3], 'C': [3], 'D': [3], 'E': [3], 'F': [3], 'G': [3], 'H': [3], 'I': [3], 'J': [3],
-            'K': [3], 'L': [3], 'M': [5], 'N': [3], 'O': [3], 'P': [3], 'Q': [3], 'R': [3], 'S': [3], 'T': [3],
-            'U': [3], 'V': [3], 'W': [5], 'X': [3], 'Y': [3], 'Z': [3],
-            'a': [3], 'b': [3], 'c': [3], 'd': [3], 'e': [3], 'f': [3], 'g': [3], 'h': [3], 'i': [1], 'j': [2],
-            'k': [3], 'l': [3], 'm': [5], 'n': [3], 'o': [3], 'p': [3], 'q': [3], 'r': [2], 's': [3], 't': [3],
-            'u': [3], 'v': [3], 'w': [5], 'x': [3], 'y': [3], 'z': [3],
-            '.': [1], '-': [3], ',': [2], ':': [1], '+': [3], '\'': [1], '!': [1], '?': [3],
-            '0': [3], '1': [3], '2': [3], '3': [3], '4': [3], '5': [3], '6': [3], '7': [3], '8': [3], '9': [3],
-            '(': [2], ')': [2], '/': [3], '_': [5], '=': [3], '\\': [3], '[': [2], ']': [2], '*': [3], '"': [3],
-            '<': [3], '>': [3], ';': [1]}
-
-
-def get_text_width(text, spacing, font_dat=font_dat):
-    width = 0
-    for char in text:
-        if char in font_dat:
-            width += font_dat[char][0] + spacing
-        elif char == ' ':
-            width += font_dat['A'][0] + spacing
-    return width
-
-
-font = text.generate_font('data/font/small_font.png', font_dat, 5, 8, (255, 255, 255))
+font = text.generate_font('data/font/small_font.png', e.font_dat, 5, 8, (255, 255, 255))
 
 # Other ------------------------------------------------------ #
 
@@ -89,6 +63,7 @@ entity_info = {
     14: [9, 10, 'core', 4, 6],
     15: [13, 4, 'turret', 0, 0],
 }
+
 
 
 def convert_time(ms):
@@ -220,6 +195,8 @@ pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.5)
 
 shoot_s_cooldown = 0
+
+paused = False
 
 # Loop ------------------------------------------------------- #
 while True:
@@ -739,6 +716,8 @@ while True:
             if event.key == K_ESCAPE:
                 pygame.quit()
                 sys.exit()
+            if event.key == K_p:
+                paused = True
             if event.key == K_d:
                 right = True
             if event.key == K_a:
@@ -816,6 +795,29 @@ while True:
     current_fps = int(fps.get_framerate())
     mainClock.tick(60)
 
+    while paused:
+        screen.blit(pause_menu, (325, 150))
+        mx2, my2 = pygame.mouse.get_pos()
+        mx2 = int(mx / 3)
+        my2 = int(my / 3)
+        e.blit_center(screen, cursor_img, (mx2, my2))
+
+        for ev in pygame.event.get():
+            if ev.type == pygame.KEYDOWN:
+                if ev.key == pygame.K_p:
+                    paused = False
+                    last_frame = pygame.time.get_ticks()
+                if ev.key == K_d:
+                    right = True
+                if ev.key == K_a:
+                    left = True
+            if ev.type == KEYUP:
+                if ev.key == K_d:
+                    right = False
+                if ev.key == K_a:
+                    left = False
+        pygame.display.update()
+        mainClock.tick(60)
 
 conn = sql.connect('scores.db')
 cursor = conn.cursor()
