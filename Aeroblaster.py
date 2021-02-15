@@ -5,6 +5,8 @@ from data.tileset_loader import load_tileset
 import data.fps as fps
 import data.text as text
 import data.engine as e
+from data.engine import load_img
+from data.engine import get_text_width
 from data.outline import perfect_outline as outline
 from sys import argv
 import sqlite3 as sql
@@ -424,7 +426,7 @@ while True:
             invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
             player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
 
-            #player = e.entity(sSpawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
+            #player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
             player.set_offset([-3, -2])
             bullets = []
             explosion_particles = []
@@ -833,9 +835,9 @@ while True:
     # Update ------------------------------------------------- #
     update_level(win)
 ##--------------------testing with level 1 time bypass thingy----------
-    if level==1:
-        level_time_1=level_time
-    print(convert_time(level_time_1))
+    #if level==1:
+        #level_time_1=level_time
+    #print(convert_time(level_time_1))
 
 ##--------ned of testing area-----------
     screen.blit(pygame.transform.scale(core_img, (33, 36)), (9, 61))

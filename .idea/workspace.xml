@@ -57,7 +57,7 @@
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="inlay.hints" />
   </component>
-  <component name="RunManager" selected="Python.Aeroblaster">
+  <component name="RunManager" selected="Python.Main_menu">
     <configuration name="Aeroblaster" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -73,6 +73,27 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Aeroblaster.py" />
       <option name="PARAMETERS" value="invisible" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Main_menu" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="CyberEdu" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Main_menu.py" />
+      <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -101,6 +122,11 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.Main_menu" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -151,31 +177,31 @@
       <screen x="1920" y="0" width="1536" height="824" />
     </state>
     <state x="2436" y="267" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1920.1040/1920.0.1536.824@1920.0.1536.824" timestamp="1613152938442" />
-    <state width="967" height="149" key="GridCell.Tab.0.bottom" timestamp="1613410731896">
+    <state width="1515" height="149" key="GridCell.Tab.0.bottom" timestamp="1613412404652">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="967" height="149" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1613410731896" />
+    <state width="1515" height="149" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1613412404652" />
     <state width="948" height="222" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1613153158522" />
     <state width="757" height="370" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.0.1536.824@1920.0.1536.824" timestamp="1613153012901" />
     <state width="2517" height="404" key="GridCell.Tab.0.bottom/0.0.2560.1410/-1920.502.1920.1050@0.0.2560.1410" timestamp="1606077675633" />
-    <state width="967" height="149" key="GridCell.Tab.0.center" timestamp="1613410731895">
+    <state width="1515" height="149" key="GridCell.Tab.0.center" timestamp="1613412404652">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="967" height="149" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1613410731895" />
+    <state width="1515" height="149" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1613412404652" />
     <state width="948" height="222" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1613153158522" />
     <state width="757" height="370" key="GridCell.Tab.0.center/0.0.1920.1040/1920.0.1536.824@1920.0.1536.824" timestamp="1613153012901" />
     <state width="2517" height="404" key="GridCell.Tab.0.center/0.0.2560.1410/-1920.502.1920.1050@0.0.2560.1410" timestamp="1606077675633" />
-    <state width="967" height="149" key="GridCell.Tab.0.left" timestamp="1613410731895">
+    <state width="1515" height="149" key="GridCell.Tab.0.left" timestamp="1613412404652">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="967" height="149" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1613410731895" />
+    <state width="1515" height="149" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1613412404652" />
     <state width="948" height="222" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1613153158522" />
     <state width="757" height="370" key="GridCell.Tab.0.left/0.0.1920.1040/1920.0.1536.824@1920.0.1536.824" timestamp="1613153012901" />
     <state width="2517" height="404" key="GridCell.Tab.0.left/0.0.2560.1410/-1920.502.1920.1050@0.0.2560.1410" timestamp="1606077675633" />
-    <state width="967" height="149" key="GridCell.Tab.0.right" timestamp="1613410731895">
+    <state width="1515" height="149" key="GridCell.Tab.0.right" timestamp="1613412404652">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state width="967" height="149" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1613410731895" />
+    <state width="1515" height="149" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1613412404652" />
     <state width="948" height="222" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1536.824@0.0.1920.1040" timestamp="1613153158522" />
     <state width="757" height="370" key="GridCell.Tab.0.right/0.0.1920.1040/1920.0.1536.824@1920.0.1536.824" timestamp="1613153012901" />
     <state width="2517" height="404" key="GridCell.Tab.0.right/0.0.2560.1410/-1920.502.1920.1050@0.0.2560.1410" timestamp="1606077675633" />
