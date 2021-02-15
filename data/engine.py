@@ -2,6 +2,7 @@ import pygame, math, os
 from pygame.locals import *
 import data.text as text
 
+<<<<<<< HEAD
 
 def load_img(name):
 	img = pygame.image.load('data/images/' + name + '.png').convert()
@@ -30,6 +31,33 @@ def get_text_width(text, spacing, font_dat=font_dat):
 		elif char==' ':
 			width += font_dat['A'][0] + spacing
 	return width
+=======
+def load_img(name):
+    img = pygame.image.load('data/images/' + name + '.png').convert()
+    img.set_colorkey((0, 0, 0))
+    return img
+
+
+# Font ------------------------------------------------------- #
+font_dat = {'A':[3],'B':[3],'C':[3],'D':[3],'E':[3],'F':[3],'G':[3],'H':[3],'I':[3],'J':[3],'K':[3],'L':[3],'M':[5],'N':[3],'O':[3],'P':[3],'Q':[3],'R':[3],'S':[3],'T':[3],'U':[3],'V':[3],'W':[5],'X':[3],'Y':[3],'Z':[3],
+          'a':[3],'b':[3],'c':[3],'d':[3],'e':[3],'f':[3],'g':[3],'h':[3],'i':[1],'j':[2],'k':[3],'l':[3],'m':[5],'n':[3],'o':[3],'p':[3],'q':[3],'r':[2],'s':[3],'t':[3],'u':[3],'v':[3],'w':[5],'x':[3],'y':[3],'z':[3],
+          '.':[1],'-':[3],',':[2],':':[1],'+':[3],'\'':[1],'!':[1],'?':[3],
+          '0':[3],'1':[3],'2':[3],'3':[3],'4':[3],'5':[3],'6':[3],'7':[3],'8':[3],'9':[3],
+          '(':[2],')':[2],'/':[3],'_':[5],'=':[3],'\\':[3],'[':[2],']':[2],'*':[3],'"':[3],'<':[3],'>':[3],';':[1]}
+
+
+def get_text_width(text,spacing, font_dat=font_dat):
+    width = 0
+    for char in text:
+        if char in font_dat:
+            width += font_dat[char][0] + spacing
+        elif char == ' ':
+            width += font_dat['A'][0] + spacing
+    return width
+
+
+
+>>>>>>> master
 
 
 global e_colorkey
@@ -146,6 +174,7 @@ def blit_center(surf, surf2, pos):
 
 
 class entity(object):
+<<<<<<< HEAD
 	global animation_database, animation_higher_database
 
 	def __init__(self, x, y, size_x, size_y, e_type, visible=True):  # x, y, size_x, size_y, type
@@ -302,6 +331,162 @@ class entity(object):
 			int(self.x) - scroll[0] + self.offset[0] + center_x, int(self.y) - scroll[1] + self.offset[1] + center_y))
 
 
+=======
+    global animation_database, animation_higher_database
+   
+    def __init__(self,x,y,size_x,size_y,e_type, visible=True): # x, y, size_x, size_y, type
+        self.x = x
+        self.y = y
+        self.original_y = y
+        self.original_x = x
+        self.size_x = size_x
+        self.size_y = size_y
+        self.obj = physics_obj(x,y,size_x,size_y)
+        self.animation = None
+        self.image = None
+        self.animation_frame = 0
+        self.animation_tags = []
+        self.flip = False
+        self.offset = [0,0]
+        self.rotation = 0
+        self.type = e_type # used to determine animation set among other things
+        self.action_timer = 0
+        self.action = ''
+        self.set_action('idle') # overall action for the entity
+        self.entity_data = {}
+        self.alpha = None
+        self.visible = visible
+ 
+    def set_pos(self,x,y):
+        self.x = x
+        self.y = y
+        self.obj.x = x
+        self.obj.y = y
+        self.obj.rect.x = x
+        self.obj.rect.y = y
+ 
+    def move(self,momentum,platforms,ramps):
+        collisions = self.obj.move(momentum,platforms,ramps)
+        self.x = self.obj.x
+        self.y = self.obj.y
+        return collisions
+ 
+    def rect(self):
+        return pygame.Rect(self.x,self.y,self.size_x,self.size_y)
+ 
+    def set_flip(self,boolean):
+        self.flip = boolean
+ 
+    def set_animation_tags(self,tags):
+        self.animation_tags = tags
+ 
+    def set_animation(self,sequence):
+        self.animation = sequence
+        self.animation_frame = 0
+ 
+    def set_action(self,action_id,force=False):
+        if (self.action == action_id) and (force == False):
+            pass
+        else:
+            self.action = action_id
+            anim = animation_higher_database[self.type][action_id]
+            self.animation = anim[0]
+            self.set_animation_tags(anim[1])
+            self.animation_frame = 0
+
+    def get_entity_angle(entity_2):
+        x1 = self.x+int(self.size_x/2)
+        y1 = self.y+int(self.size_y/2)
+        x2 = entity_2.x+int(entity_2.size_x/2)
+        y2 = entity_2.y+int(entity_2.size_y/2)
+        angle = math.atan((y2-y1)/(x2-x1))
+        if x2 < x1:
+            angle += math.pi
+        return angle
+
+    def get_point_angle(self, point):
+        return math.atan2(point[1] - self.get_center()[1], point[0] - self.get_center()[0])
+
+    def get_distance(self, point):
+        dis_x = point[0] - self.get_center()[0]
+        dis_y = point[1] - self.get_center()[1]
+        return math.sqrt(dis_x ** 2 + dis_y ** 2)
+
+    def get_center(self):
+        x = self.x+int(self.size_x/2)
+        y = self.y+int(self.size_y/2)
+        return [x,y]
+ 
+    def clear_animation(self):
+        self.animation = None
+ 
+    def set_image(self,image):
+        self.image = image
+ 
+    def set_offset(self,offset):
+        self.offset = offset
+ 
+    def set_frame(self,amount):
+        self.animation_frame = amount
+ 
+    def handle(self):
+        self.action_timer += 1
+        self.change_frame(1)
+ 
+    def change_frame(self,amount):
+        self.animation_frame += amount
+        if self.animation != None:
+            while self.animation_frame < 0:
+                if 'loop' in self.animation_tags:
+                    self.animation_frame += len(self.animation)
+                else:
+                    self.animation = 0
+            while self.animation_frame >= len(self.animation):
+                if 'loop' in self.animation_tags:
+                    self.animation_frame -= len(self.animation)
+                else:
+                    self.animation_frame = len(self.animation)-1
+ 
+    def get_current_img(self):
+        if self.animation == None:
+            if self.image != None:
+                return flip(self.image,self.flip)
+            else:
+                return None
+        else:
+            return flip(animation_database[self.animation[self.animation_frame]],self.flip)
+
+    def get_drawn_img(self):
+        image_to_render = None
+        if self.animation == None:
+            if self.image != None:
+                image_to_render = flip(self.image,self.flip).copy()
+        else:
+            image_to_render = flip(animation_database[self.animation[self.animation_frame]],self.flip).copy()
+        if image_to_render != None:
+            center_x = image_to_render.get_width()/2
+            center_y = image_to_render.get_height()/2
+            image_to_render = pygame.transform.rotate(image_to_render,self.rotation)
+            if self.alpha != None:
+                image_to_render.set_alpha(self.alpha)
+            return image_to_render, center_x, center_y
+ 
+    def display(self,surface,scroll):
+        image_to_render = None
+        if self.animation == None:
+            if self.image != None:
+                image_to_render = flip(self.image,self.flip).copy()
+        else:
+            image_to_render = flip(animation_database[self.animation[self.animation_frame]],self.flip).copy()
+        if image_to_render != None:
+            center_x = image_to_render.get_width()/2
+            center_y = image_to_render.get_height()/2
+            image_to_render = pygame.transform.rotate(image_to_render,self.rotation)
+            if self.alpha != None:
+                image_to_render.set_alpha(self.alpha)
+            blit_center(surface,image_to_render,(int(self.x)-scroll[0]+self.offset[0]+center_x,int(self.y)-scroll[1]+self.offset[1]+center_y))
+ 
+>>>>>>> master
 # animation stuff
 
 global animation_database

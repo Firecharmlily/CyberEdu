@@ -42,8 +42,11 @@ name_width = 60
 name_height = 25
 text_offset = 0
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> master
 while True:
     click = pygame.mouse.get_pressed()
     mx, my = pygame.mouse.get_pos()
@@ -109,5 +112,9 @@ while True:
     screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
     pygame.display.update()
     clock.tick(60)
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 pygame.quit()
 quit()
