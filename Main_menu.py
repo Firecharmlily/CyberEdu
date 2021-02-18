@@ -18,6 +18,9 @@ pygame.event.set_grab(True)
 
 splash_image = engine.load_img("Title_of_Game")
 cursor = engine.load_img("cursor")
+pygame.mixer.music.load('data/music.wav')
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.5)
 
 font = text.generate_font('data/font/small_font.png', engine.font_dat, 5, 8, (255, 255, 255))
 
@@ -37,9 +40,9 @@ end_width = 50
 end_height = 25
 
 # name entry positioning
-namex = 125
+namex = 110
 namey = 165
-name_width = 60
+name_width = 90
 name_height = 25
 text_offset = 0
 
