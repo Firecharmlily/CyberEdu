@@ -36,9 +36,9 @@ end_width = 50
 end_height = 25
 
 # name entry positioning
-namex = 125
+namex = 90
 namey = 165
-name_width = 60
+name_width = 120
 name_height = 25
 text_offset = 0
 
@@ -78,7 +78,7 @@ while True:
     else:
         if click[0] == 1:
             text_active = False
-    text.show_text(name[text_offset:], 130, 170, 1, name_width, font, display, 2)
+    text.show_text(name[text_offset:], 90, 170, 1, name_width, font, display, 2)
 
     # displays cursor on screen
     engine.blit_center(display, cursor, (mx, my))
