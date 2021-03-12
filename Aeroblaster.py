@@ -142,14 +142,14 @@ def load_level(number):
 
 # Initilize variables-------------------------------
 top_tile_list = [9, 10, 11, 12, 13]
-if len(argv) < 1:
-    temp = "1"
-    level = 1
+
+if len(argv) < 3:
+    level = "1"
 else:
-    temp = argv[2]
-    level = 4
-final = "level_" + level + ".txt"
-tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(final)
+    level = argv[2]
+
+temp = level + ".txt"
+tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
 current_fps = 0
 dt = 0  # delta time
 last_frame = pygame.time.get_ticks()
@@ -339,14 +339,25 @@ def temp_Pause_test():
     elif win >= 50:
         bar_height += (110 - bar_height) / 10
         if bar_height > 100:
+
+            # level is number, level is numeric string, or level is text
+            if not type(level) == int:
+                if level.isnumeric():
+                    level = int(level)
+                else:
+                    level = 0
+
             level += 1
-            temp = "level_" + str(level) + ".txt"
+            temp = str(level) + ".txt"
             total_time += level_time
             level_time = 0
+
             try:
                 tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
             except FileNotFoundError:
                 return False
+
+
             player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
             player.set_offset([-3, -2])
             bullets = []
@@ -429,8 +440,13 @@ while True:
     elif win >= 50:
         bar_height += (110 - bar_height) / 10
         if bar_height > 100:
+            if not type(level) == int:
+                if level.isnumeric():
+                    level = int(level)
+                else:
+                    level = 0
             level += 1
-            temp = "level_" + str(level) + ".txt"
+            temp = str(level) + ".txt"
             total_time += level_time
             level_time = 0
             try:
