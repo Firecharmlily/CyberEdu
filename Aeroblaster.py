@@ -210,6 +210,18 @@ level_selecty = 100
 level_select_width = 125
 level_select_height = 25
 
+# restart button positioning
+restartx = 115
+restarty = 135
+restart_width = 67
+restart_height = 20
+
+# main menu button positioning
+main_menux = 100
+main_menuy = 165
+main_menu_width = 90
+main_menu_height = 20
+
 # Loop ------------------------------------------------------- #
 while True:
 
@@ -817,23 +829,18 @@ while True:
         text.show_text('Paused', 125, 40, 1, 9999, font, display, 2)
 
         # creates resume button
-        display.fill((34, 23, 36), (resumex, resumey, resume_width, resume_height))
-        if resumex + resume_width > mx > resumex and resumey + resume_height > my > resumey:
-            display.fill((104, 93, 106), (resumex, resumey, resume_width, resume_height))
-            if click[0] == 1:
-                paused = False
-                last_frame = pygame.time.get_ticks()
-        text.show_text('Resume', resumex + 8, resumey + 5, 1, 9999, font, display, 2)
+        resume_button = e.Button(resumex, resumey, resume_width, resume_height, font, "Resume", display)
+        if resume_button.check_button(mx, my, click):
+            paused = False
+            last_frame = pygame.time.get_ticks()
 
         # creates level select button
-        display.fill((34, 23, 36), (level_selectx, level_selecty, level_select_width, level_select_height))
-        if level_selectx + level_select_width > mx > level_selectx and level_selecty + level_select_height > my > level_selecty:
-            display.fill((104, 93, 106), (level_selectx, level_selecty, level_select_width, level_select_height))
-            if click[0] == 1:
-                exec(open("Main_menu.py").read())
-        text.show_text('Level Select', level_selectx + 15, level_selecty + 5, 1, 9999, font, display, 2)
+        level_select_button = e.Button(level_selectx, level_selecty, level_select_width, level_select_height, font, "Level Select", display)
+        if level_select_button.check_button(mx, my, click):
+            exec(open("Main_menu.py").read())
 
-        restart_button = e.Button(115, 135, 67, 20, font, "Restart", display)
+        # creates restart button
+        restart_button = e.Button(restartx, restarty, restart_width, restart_height, font, "Restart", display)
         if restart_button.check_button(mx, my, click):
             tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
 
@@ -858,7 +865,8 @@ while True:
             click = (0, 0)
             paused = False
 
-        main_menu_button = e.Button(100, 165, 90, 20, font, "Main Menu", display)
+        # creates main menu button
+        main_menu_button = e.Button(main_menux, main_menuy, main_menu_width, main_menu_height, font, "Main Menu", display)
         if main_menu_button.check_button(mx, my, click):
             exec(open("Main_menu.py").read())
 
