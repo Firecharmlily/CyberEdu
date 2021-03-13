@@ -562,7 +562,7 @@ while True:
     shoot_timer = max(shoot_timer - 1 * dtf(dt) * game_speed, 0)
 
     if click and not dead:
-
+        #responsible for fire rate
         if shoot_timer == 0:
             moved = True
             shoot_s.play()
