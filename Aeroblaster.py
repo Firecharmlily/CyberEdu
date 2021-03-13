@@ -566,7 +566,7 @@ while True:
         if shoot_timer == 0:
             moved = True
             shoot_s.play()
-            shoot_timer = 1
+            shoot_timer = 12
             player_velocity[0] -= math.cos(math.radians(-rot)) * 1  # recoil
             player_velocity[1] -= math.sin(math.radians(-rot)) * 1
             bullets.append(['player', [player.get_center()[0], player.get_center()[1] + 3],
