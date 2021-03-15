@@ -52,30 +52,6 @@ def collision_test(object_1, object_list):
 	return collision_list
 
 
-
-class Button(object):
-
-    def __init__(self, buttonx, buttony, button_width, button_height, font, button_text, surface):
-        self.x = buttonx
-        self.y = buttony
-        self.width = button_width
-        self.height = button_height
-        self.font = font
-        self.text = button_text
-        self.surface = surface
-
-    def check_button(self, mx, my, click):
-        clicked = False
-        self.surface.fill((34, 23, 36), (self.x, self.y, self.width, self.height))
-        if self.x + self.width > mx > self.x and self.y + self.height > my > self.y:
-            self.surface.fill((104, 93, 106), (self.x, self.y, self.width, self.height))
-            if click[0] == 1:
-                clicked = True
-        text.show_text(self.text, self.x + 8, self.y + 5, 1, 9999, self.font, self.surface, 2)
-        return clicked
-
-
-
 # 2d physics object
 class physics_obj(object):
 
