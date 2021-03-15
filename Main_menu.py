@@ -41,7 +41,6 @@ end_width = 50
 end_height = 25
 
 # name entry positioning
-
 namex = 40
 namey = 165
 name_width = 90
@@ -66,11 +65,6 @@ while True:
     display.blit(splash_image, (0, 0))
 
     # creates start button
-    start_button = engine.Button(startx, starty, start_width, start_height, font, "start", display)
-    if start_button.check_button(mx, my, click):
-        sys.argv = ["text", name]
-        exec(open("Aeroblaster.py").read())
-
     display.fill((34, 23, 36), (startx, starty, start_width, start_height))
     if startx + start_width > mx > startx and starty + start_height > my > starty:
         display.fill((104, 93, 106), (startx, starty, start_width, start_height))
@@ -79,11 +73,13 @@ while True:
             exec(open("Aeroblaster.py").read())
     text.show_text('start', startx + 8, starty + 5, 1, 9999, font, display, 2)
 
-
     # creates end button
-    end_button = engine.Button(endx, endy, end_width, end_height, font, "end", display)
-    if end_button.check_button(mx, my, click):
-        quit()
+    display.fill((34, 23, 36), (endx, endy, end_width, end_height))
+    if endx + end_width > mx > endx and endy + end_height > my > endy:
+        display.fill((104, 93, 106), (endx, endy, end_width, end_height))
+        if click[0] == 1:
+            quit()
+    text.show_text('end', endx + 15, endy + 5, 1, 9999, font, display, 2)
 
     # creates name entry box
     display.fill((34, 23, 36), (namex, namey, name_width, name_height))
@@ -106,7 +102,6 @@ while True:
         if click[0] == 1:
             text_active_level = False
     text.show_text(level[level_offset:], levelx+5, levely+5, 1, level_width, font, display, 2)
-
 
     # displays cursor on screen
     engine.blit_center(display, cursor, (mx, my))
