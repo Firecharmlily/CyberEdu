@@ -406,7 +406,31 @@ def temp_Pause_test():
     return True
 #end of temp pause method
 
+# resume button positioning
+resumex = 115
+resumey = 65
+resume_width = 65
+resume_height = 25
+
+# level select button positioning
+level_selectx = 85
+level_selecty = 100
+level_select_width = 125
+level_select_height = 25
+
+# restart button positioning
+restartx = 115
+restarty = 135
+restart_width = 67
+restart_height = 20
+
+# main menu button positioning
+main_menux = 100
+main_menuy = 165
+main_menu_width = 90
+main_menu_height = 20
 # Game Loop ------------------------------------------------------- #
+
 while True:
 # Background --------------------------------------------- #
 # ---temp pause related---
@@ -884,14 +908,67 @@ while True:
 
 #if paused
     while paused:
-        screen.blit(pause_menu, (325, 150))
-        mx2, my2 = pygame.mouse.get_pos()
-        mx2 = int(mx / 3)
-        my2 = int(my / 3)
-        e.blit_center(screen, cursor_img, (mx2, my2))
+        display.fill((79, 66, 113))
+        click = pygame.mouse.get_pressed()
+        mx, my = pygame.mouse.get_pos()
+        mx = int(mx / 3)
+        my = int(my / 3)
+
+        text.show_text('Paused', 125, 40, 1, 9999, font, display, 2)
+
+        # creates resume button
+        resume_button = e.Button(resumex, resumey, resume_width, resume_height, font, "Resume", display)
+        if resume_button.check_button(mx, my, click):
+            paused = False
+            last_frame = pygame.time.get_ticks()
+
+        # creates level select button
+        level_select_button = e.Button(level_selectx, level_selecty, level_select_width, level_select_height, font, "Level Select", display)
+        if level_select_button.check_button(mx, my, click):
+            exec(open("Main_menu.py").read())
+
+        # creates restart button
+        restart_button = e.Button(restartx, restarty, restart_width, restart_height, font, "Restart", display)
+        if restart_button.check_button(mx, my, click):
+            tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
+
+            invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
+
+            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
+            player.set_offset([-3, -2])
+            bullets = []
+            explosion_particles = []
+            particles = []
+            circle_effects = []
+            scroll_target = [player.get_center()[0], player.get_center()[1]]
+            scroll = scroll_target.copy()
+            true_scroll = scroll.copy()
+            win = 0
+            moved = False
+            left = False
+            right = False
+            player_velocity = [0, 0]
+            flashes = []
+
+            click = (0, 0)
+            paused = False
+
+        # creates main menu button
+        main_menu_button = e.Button(main_menux, main_menuy, main_menu_width, main_menu_height, font, "Main Menu", display)
+        if main_menu_button.check_button(mx, my, click):
+            exec(open("Main_menu.py").read())
+
+        e.blit_center(display, cursor_img, (mx, my))
 
         for ev in pygame.event.get():
+            if ev.type == QUIT:
+                pygame.quit()
+                sys.exit()
             if ev.type == pygame.KEYDOWN:
+                if ev.type == pygame.KEYDOWN:
+                    if ev.key == K_ESCAPE:
+                        pygame.quit()
+                        sys.exit()
                 if ev.key == pygame.K_p:
                     paused = False
                     last_frame = pygame.time.get_ticks()
@@ -904,6 +981,7 @@ while True:
                     right = False
                 if ev.key == K_a:
                     left = False
+        screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
         pygame.display.update()
         mainClock.tick(60)
 #if paused end
