@@ -104,9 +104,6 @@ while True:
             text_active_level = True
     else:
         if click[0] == 1:
-
-            text_active = False
-    text.show_text(name[text_offset:], 90, 170, 1, name_width, font, display, 2)
             text_active_level = False
     text.show_text(level[level_offset:], levelx+5, levely+5, 1, level_width, font, display, 2)
 
