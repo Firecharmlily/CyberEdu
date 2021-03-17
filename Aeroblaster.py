@@ -97,15 +97,8 @@ def load_level(number):
     onlyfiles = next(os.walk(pathNameTest))[2]  # dir is your directory path as string
     #print(len(onlyfiles))
     levelTemp="1"
-    #
-    try:
-        testLevel = int(number)
-        if testLevel > 0 and testLevel <= len(onlyfiles):
-            levelTemp = number
-    except:
-        levelTemp = "1"
 
-    level = levelTemp + ".txt"
+    level = number + ".txt"
 
     outfile = os.path.join('data/levels/', level)
     if os.path.exists(os.path.dirname(outfile)):
