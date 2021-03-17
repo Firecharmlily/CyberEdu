@@ -98,7 +98,10 @@ def load_level(number):
     #print(len(onlyfiles))
     levelTemp="1"
 
-    level = number + ".txt"
+    if(number != ""):
+        level = number + ".txt"
+    else:
+        level = levelTemp + ".txt"
 
     outfile = os.path.join('data/levels/', level)
     if os.path.exists(os.path.dirname(outfile)):
