@@ -2,3 +2,9 @@
 scores.db
 
 
+data/__pycache__/clip.cpython-38.pyc
+data/__pycache__/engine.cpython-38.pyc
+data/__pycache__/fps.cpython-38.pyc
+data/__pycache__/outline.cpython-38.pyc
+data/__pycache__/text.cpython-38.pyc
+data/__pycache__/tileset_loader.cpython-38.pyc
