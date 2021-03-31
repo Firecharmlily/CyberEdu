@@ -90,16 +90,13 @@ def dtf(dt):
 def xy2str(pos):
     return str(pos[0]) + ';' + str(pos[1])
 
-
 def load_level(number):
-
-    pathNameTest = "data/levels/"
-    onlyfiles = next(os.walk(pathNameTest))[2]  # dir is your directory path as string
-    #print(len(onlyfiles))
+    num=str(number)
     levelTemp="1"
 
     if(number != ""):
-        level = number + ".txt"
+        level = num + ".txt"
+
     else:
         level = levelTemp + ".txt"
 
@@ -151,11 +148,24 @@ def load_level(number):
     limits = [limits[0] * 16, limits[1] * 16]
     return final_tile_map, entities, max_height - min_height + 1, spawnpoint, total_cores, limits
 
+
 # Initilize variables-------------------------------
 top_tile_list = [9, 10, 11, 12, 13]
 
 #Check for empty/invalid input
+name=""
+if argv[1]=='':
+    name="EmptyUser"
+else:
+    name=argv[1]
+
+level=1
+
+if(argv[2] != ""):
+    level = int(argv[2])
+
 tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(argv[2])
+
 current_fps = 0
 dt = 0  # delta time
 last_frame = pygame.time.get_ticks()
@@ -355,7 +365,70 @@ def entity_Loop():
                         0.03, random.randint(10, 35) / 10, (79, 66, 113)))
             entities.pop(i)
 
+def win_screen():
+    while True:
+        display.fill((34, 23, 36))
+        for event in pygame.event.get():
+            if event.type==QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type==KEYDOWN:
+                if event.key==K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
+    text.show_text('You Win!', 150 - get_text_width('You Win!', 1) / 2, 90, 1, 9999, font, display)
+    text.show_text(convert_time(total_time), 150 - get_text_width(convert_time(total_time), 1) / 2, 100, 1, 9999, font,
+        display)
 
+    screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
+    pygame.display.update()
+    mainClock.tick(60)
+
+
+def dataBaseInput(n,tt):
+    conn = sql.connect('scores.db')
+    cursor = conn.cursor()
+
+    cursor.execute('''CREATE TABLE IF NOT EXISTS scores (name text, time real);''')
+
+    s_query = f'''INSERT INTO scores (name,time) VALUES ('{n}','{tt}'); '''
+    print(s_query)
+    #TEMP FOR CHECKING OF TIME TOOK TO COMPLETE LEVEL
+    #if tt > 1000:
+       # Restart_L()
+    #PLEASE CHECK NOT WORKING
+    cursor.execute(s_query)
+    conn.commit()
+    conn.close()
+
+
+def Restart_L(): #Not working
+    dead=True
+    text.show_text('click to restart', 150 - int(get_text_width('click to restart', 1) / 2), 97, 1, 9999, font,
+        main_display)
+    if click:
+        dead = False
+        temp = str(level)
+        tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
+        player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
+        player.set_offset([-3, -2])
+        level_time = 0
+        bullets = []
+        flashes = []
+        explosion_particles = []
+        particles = []
+        circle_effects = []
+        scroll_target = [player.get_center()[0], player.get_center()[1]]
+        scroll = scroll_target.copy()
+        true_scroll = scroll.copy()
+        bar_height = 100
+        moved = False
+        player_velocity = [0, 0]
+
+# Game Loop ------------------------------------------------------- #
+# Game Loop ------------------------------------------------------- #
+# Game Loop ------------------------------------------------------- #
+# Game Loop ------------------------------------------------------- #
 # Game Loop ------------------------------------------------------- #
 while True:
 # Background --------------------------------------------- #
@@ -385,40 +458,38 @@ while True:
         bar_height += ((1 - game_speed) * 40 - bar_height) / 10
     elif win >= 50:
         bar_height += (110 - bar_height) / 10
-        if bar_height > 100:
-            if not type(level) == int:
-                if level.isnumeric():
-                    level = int(level)
-                else:
-                    level = 0
-            level += 1
-            temp = str(level) + ".txt"
-            total_time += level_time
-            level_time = 0
-            try:
-                tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
-            except FileNotFoundError:
-                break
 
-            #----INVISIBLE ARGUMENT ERROR FOUND AND TEMP RESOLVED
-            invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
-            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
+    if bar_height > 100:
+        level += 1
+        if level==2:
+            dataBaseInput(name, total_time) #IMPORTANT!!!! ADD PREVENTION OF PROGRESS HERE
+        temp = str(level)
+        total_time += level_time
+        level_time = 0
+        try:
+            tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
+        except FileNotFoundError:
+            break
 
-            #player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
-            player.set_offset([-3, -2])
-            bullets = []
-            explosion_particles = []
-            particles = []
-            circle_effects = []
-            scroll_target = [player.get_center()[0], player.get_center()[1]]
-            scroll = scroll_target.copy()
-            true_scroll = scroll.copy()
-            win = 0
-            moved = False
-            left = False
-            right = False
-            player_velocity = [0, 0]
-            flashes = []
+        #----INVISIBLE ARGUMENT ERROR FOUND AND TEMP RESOLVED
+        invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
+        player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
+
+        #player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
+        player.set_offset([-3, -2])
+        bullets = []
+        explosion_particles = []
+        particles = []
+        circle_effects = []
+        scroll_target = [player.get_center()[0], player.get_center()[1]]
+        scroll = scroll_target.copy()
+        true_scroll = scroll.copy()
+        win = 0
+        moved = False
+        left = False
+        right = False
+        player_velocity = [0, 0]
+        flashes = []
     if abs(1 - game_speed) < 0.05:
         game_speed = 1
 
@@ -697,32 +768,26 @@ while True:
     e.blit_center(main_display, cursor_img, (mx, my))
 
     # UI ----------------------------------------------------- #
-    if level == 1:
-        if not moved:
-            controls_timer = (controls_timer + 1) % 50
-            if controls_timer <= 42:
-                main_display.blit(controls_1, (player.x - scroll[0] - 17, player.y - scroll[1] - 22))
-            else:
-                main_display.blit(controls_2, (player.x - scroll[0] - 17, player.y - scroll[1] - 22))
+    if level==1:
         text.show_text('Finish the level in less than 1 second!',
-                       150 - int(get_text_width('Finish the level in less than 1 second!', 1) / 2), 35, 1, 9999, font,
-                       main_display)
+            150 - int(get_text_width('Finish the level in less than 1 second!', 1) / 2), 35, 1, 9999, font,
+            main_display)
         main_display.blit(core_img, (145, 47))
-    if level == 2:
 
+    if level==2:
         text.show_text('drop to loop around', 150 - int(get_text_width('drop to loop around', 1) / 2), 45, 1, 9999,
-                       font, main_display)
-    if level == 3:
+            font, main_display)
+    if level==3:
         text.show_text('shoot    avoid', 150 - int(get_text_width('shoot    avoid', 1) / 2), 45, 1, 9999, font,
-                       main_display)
+            main_display)
         main_display.blit(turret_example_img, (122, 57))
         main_display.blit(shot_example_img, (163, 57))
     if dead:
         text.show_text('click to restart', 150 - int(get_text_width('click to restart', 1) / 2), 97, 1, 9999, font,
-                       main_display)
+            main_display)
         if click:
             dead = False
-            temp = "level_" + str(level) + ".txt"
+            temp = str(level)
             tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
             player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
             player.set_offset([-3, -2])
@@ -813,7 +878,8 @@ while True:
 
     # Update ------------------------------------------------- #
     update_level(win)
-
+    text.show_text(convert_time(total_time) + ' > ' + convert_time(level_time), 3, 3, 1, 9999, font, screen, 3)
+    text.show_text('level:  ' + str(level), 3, 12, 1, 9999, font, screen, 3)
     screen.blit(pygame.transform.scale(core_img, (33, 36)), (9, 61))
     text.show_text(str(total_cores - cores_left) + '/' + str(total_cores), 16, 23, 1, 9999, font, screen, 3)
 
@@ -899,36 +965,6 @@ while True:
         screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
         pygame.display.update()
         mainClock.tick(60)
-
-conn = sql.connect('scores.db')
-cursor = conn.cursor()
-
-name = "Temp" if len(argv) < 1 else argv[1]
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS scores (name text, time real);''')
-
-s_query = f'''INSERT INTO scores (name,time) VALUES ('{name}','{total_time}'); '''
-print(s_query)
-cursor.execute(s_query)
-conn.commit()
-conn.close()
-
-while True:
-    display.fill((34, 23, 36))
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == KEYDOWN:
-            if event.key == K_ESCAPE:
-                pygame.quit()
-                sys.exit()
-
-    text.show_text('You Win!', 150 - get_text_width('You Win!', 1) / 2, 90, 1, 9999, font, display)
-    text.show_text(convert_time(total_time), 150 - get_text_width(convert_time(total_time), 1) / 2, 100, 1, 9999, font,
-                   display)
-
-    screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
-    pygame.display.update()
-    mainClock.tick(60)
-
+#
+#----------WIN screen-------------
+win_screen()
