@@ -91,11 +91,11 @@ def xy2str(pos):
     return str(pos[0]) + ';' + str(pos[1])
 
 def load_level(number):
-    num=str(number)
+    #num=str(number)
     levelTemp="1"
 
     if(number != ""):
-        level = num + ".txt"
+        level = str(number) + ".txt"
 
     else:
         level = levelTemp + ".txt"
@@ -159,10 +159,15 @@ if argv[1]=='':
 else:
     name=argv[1]
 
-level=1
 
-if(argv[2] != ""):
-    level = int(argv[2])
+level=1
+levelTemp=""
+try:
+    if(len(argv[2])==1):
+        level = int(argv[2])
+except:
+    levelTemp=argv[2]
+
 
 tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(argv[2])
 
@@ -458,38 +463,37 @@ while True:
         bar_height += ((1 - game_speed) * 40 - bar_height) / 10
     elif win >= 50:
         bar_height += (110 - bar_height) / 10
+        if bar_height > 100:
+            level += 1
+            if level==2:
+                dataBaseInput(name, total_time) #IMPORTANT!!!! ADD PREVENTION OF PROGRESS HERE
+            temp = str(level)
+            total_time += level_time
+            level_time = 0
+            try:
+                tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
+            except FileNotFoundError:
+                break
 
-    if bar_height > 100:
-        level += 1
-        if level==2:
-            dataBaseInput(name, total_time) #IMPORTANT!!!! ADD PREVENTION OF PROGRESS HERE
-        temp = str(level)
-        total_time += level_time
-        level_time = 0
-        try:
-            tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
-        except FileNotFoundError:
-            break
+            #----INVISIBLE ARGUMENT ERROR FOUND AND TEMP RESOLVED
+            invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
+            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
 
-        #----INVISIBLE ARGUMENT ERROR FOUND AND TEMP RESOLVED
-        invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
-        player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
-
-        #player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
-        player.set_offset([-3, -2])
-        bullets = []
-        explosion_particles = []
-        particles = []
-        circle_effects = []
-        scroll_target = [player.get_center()[0], player.get_center()[1]]
-        scroll = scroll_target.copy()
-        true_scroll = scroll.copy()
-        win = 0
-        moved = False
-        left = False
-        right = False
-        player_velocity = [0, 0]
-        flashes = []
+            #player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
+            player.set_offset([-3, -2])
+            bullets = []
+            explosion_particles = []
+            particles = []
+            circle_effects = []
+            scroll_target = [player.get_center()[0], player.get_center()[1]]
+            scroll = scroll_target.copy()
+            true_scroll = scroll.copy()
+            win = 0
+            moved = False
+            left = False
+            right = False
+            player_velocity = [0, 0]
+            flashes = []
     if abs(1 - game_speed) < 0.05:
         game_speed = 1
 
