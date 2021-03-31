@@ -401,7 +401,7 @@ while True:
             except FileNotFoundError:
                 break
 
-            #TODO: Take out game testing hack
+            #TODO: Take out level inspecting/testing strategem.
             #TODO: Remember that key = 1
             invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
             player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
