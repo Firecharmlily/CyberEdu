@@ -28,31 +28,31 @@ name = ""
 level = ""
 text_active = False
 
-# start button positioning
-startx = 60
-starty = 125
-start_width = 50
-start_height = 25
-
-# end button positioning
-endx = 190
-endy = 125
-end_width = 50
-end_height = 25
-
 # name entry positioning
 namex = 40
-namey = 165
+namey = 130
 name_width = 90
 name_height = 25
 name_offset = 0
 
 # name entry positioning
 levelx = 170
-levely = 165
+levely = 130
 level_width = 90
 level_height = 25
 level_offset = 0
+
+# start button positioning
+startx = 60
+starty = 170
+start_width = 50
+start_height = 25
+
+# end button positioning
+endx = 190
+endy = 170
+end_width = 50
+end_height = 25
 
 while True:
     click = pygame.mouse.get_pressed()
