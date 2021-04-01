@@ -153,23 +153,22 @@ def load_level(number):
 top_tile_list = [9, 10, 11, 12, 13]
 
 #Check for empty/invalid input
-name=""
-if argv[1]=='':
-    name="EmptyUser"
+name = ""
+if len(argv) >= 2:
+    name = argv[1]
 else:
-    name=argv[1]
-
+    name = "EmptyUser"
 
 level=1
 levelTemp=""
 try:
-    if(len(argv[2])==1):
+    if len(argv) >= 3:
         level = int(argv[2])
 except:
-    levelTemp=argv[2]
+    levelTemp = argv[2]
 
 
-tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(argv[2])
+tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
 
 current_fps = 0
 dt = 0  # delta time
@@ -370,6 +369,7 @@ def entity_Loop():
                         0.03, random.randint(10, 35) / 10, (79, 66, 113)))
             entities.pop(i)
 
+
 def win_screen():
     while True:
         display.fill((34, 23, 36))
@@ -390,7 +390,7 @@ def win_screen():
     mainClock.tick(60)
 
 
-def dataBaseInput(n,tt):
+def dataBaseInput(n, tt):
     conn = sql.connect('scores.db')
     cursor = conn.cursor()
 
@@ -429,6 +429,7 @@ def Restart_L(): #Not working
         bar_height = 100
         moved = False
         player_velocity = [0, 0]
+
 
 # Game Loop ------------------------------------------------------- #
 # Game Loop ------------------------------------------------------- #
@@ -476,7 +477,8 @@ while True:
                 break
 
             #----INVISIBLE ARGUMENT ERROR FOUND AND TEMP RESOLVED
-            invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
+            invisible = "invisible" == "".join([chr(ord(c) + 1) for c in name])
+
             player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
 
             #player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
