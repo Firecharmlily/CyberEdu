@@ -2,10 +2,10 @@
 Game building of Cyber security game meant to engage high schooler and college level students in the world of cyber security.
 
 ## Topics
-- SQL Injection
-- Cryptography (Help: https://www.dcode.fr/caesar-cipher)
-- Reverse Engineering
-- Directory Traversal
+- SQL Injection (Hint: )
+- Cryptography (Hint: https://www.dcode.fr/caesar-cipher)
+- Reverse Engineering 
+- Directory Traversal (Hint: https://security.openstack.org/guidelines/dg_using-file-paths.html)
 
 ## Requirements
 - Python3
