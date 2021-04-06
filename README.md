@@ -7,5 +7,10 @@ Game building of Cyber security game meant to engage high schooler and college l
 - Reverse Engineering
 - Directory Traversal
 
-## How to Run 
+## Requirements
+- Python3
+- pygames (pip install pygame)
+
+## How to Run
+Run with the command:
 `python Main_menu.py` or `python3 Main_menu.py`
