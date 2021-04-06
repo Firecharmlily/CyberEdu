@@ -12,5 +12,8 @@ Game building of Cyber security game meant to engage high schooler and college l
 - pygames (pip install pygame)
 
 ## How to Run
-Run with the command:
+Run python file with the command:
 `python Main_menu.py` or `python3 Main_menu.py`
+
+If wanting to challenge self with reversable bytecode:
+`python3 Main_menu.cpython-39`
