@@ -92,8 +92,8 @@ def xy2str(pos):
 
 
 def load_level(number):
-    #TODO: Fix levels to read ints and not strings
-    #TODO: Inspect why players can access hidden level
+    # TODO: Fix levels to read ints and not strings
+    # TODO: Inspect why players can access hidden level
     pathNameTest = "data/levels/"
     onlyfiles = next(os.walk(pathNameTest))[2]  # dir is your directory path as string
     #print(len(onlyfiles))
@@ -356,8 +356,140 @@ def entity_Loop():
                         0.03, random.randint(10, 35) / 10, (79, 66, 113)))
             entities.pop(i)
 
+#begining of temp pause method
+def temp_Pause_test():
+    global shoot_s_cooldown, last_frame, level_time, game_speed, background_timer, win
+    global bar_height, true_scroll, scroll, camera_sources, scroll_target, entities, mx, my
+    global cores_left, level, total_time
+    dt = pygame.time.get_ticks() - last_frame
+    last_frame = pygame.time.get_ticks()
+    fps.get_time()
+    if not dead:
+        level_time += dt * game_speed
+    display.fill((34, 23, 36))
+    main_display.fill((0, 0, 0))
+
+    if shoot_s_cooldown > 0:
+        shoot_s_cooldown -= 1
+
+    background_timer = (background_timer + dtf(dt) * game_speed * 0.5) % 20
+    for i in range(16):
+        i -= 4
+        pygame.draw.line(display, (8, 5, 8), (0, i * 20 - background_timer),
+                         (display.get_width(), i * 20 - background_timer + 30 * (1.2 / (game_speed + 0.2))), 7)
+
+    if win != 0:
+        win += 1
+
+    game_speed += (1 - game_speed) / 20
+    if win < 50:
+        bar_height += ((1 - game_speed) * 40 - bar_height) / 10
+    elif win >= 50:
+        bar_height += (110 - bar_height) / 10
+        if bar_height > 100:
+
+            # level is number, level is numeric string, or level is text
+            if not type(level) == int:
+                if level.isnumeric():
+                    level = int(level)
+                else:
+                    level = 0
+
+            level += 1
+            temp = str(level) + ".txt"
+            total_time += level_time
+            level_time = 0
+
+            try:
+                tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
+            except FileNotFoundError:
+                return False
+
+
+            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
+            player.set_offset([-3, -2])
+            bullets = []
+            explosion_particles = []
+            particles = []
+            circle_effects = []
+            scroll_target = [player.get_center()[0], player.get_center()[1]]
+            scroll = scroll_target.copy()
+            true_scroll = scroll.copy()
+            win = 0
+            moved = False
+            left = False
+            right = False
+            player_velocity = [0, 0]
+            flashes = []
+    if abs(1 - game_speed) < 0.05:
+        game_speed = 1
+
+    scroll = [int(true_scroll[0]), int(true_scroll[1])]
+
+    lowest = [10, None]
+    for i, source in enumerate(camera_sources):
+        if source[0] < lowest[0]:
+            lowest = [source[0], i]
+
+    if lowest[1] != None:
+        if not dead:
+            scroll_target = camera_sources[lowest[1]][1]
+            game_speed = lowest[0]
+
+    true_scroll[0] += (scroll_target[0] - display.get_width() / 2 - true_scroll[0]) / 10 * dtf(dt)
+    true_scroll[1] += (scroll_target[1] - display.get_height() / 2 - true_scroll[1]) / 10 * dtf(dt)
+
+    mx, my = pygame.mouse.get_pos()
+    mx = int(mx / 3)
+    my = int(my / 3)
+
+    camera_sources = []
+
+    cores_left = 0
+    for entity in entities:
+        if entity[0].type == 'core':
+            cores_left += 1
+    if (cores_left == 0) and (win == 0):
+        win = 1
+    return True
+# end of temp pause method
+
+
+# resume button positioning
+resumex = 115
+resumey = 65
+resume_width = 65
+resume_height = 25
+
+# level select button positioning
+level_selectx = 85
+level_selecty = 100
+level_select_width = 125
+level_select_height = 25
+
+# restart button positioning
+restartx = 115
+restarty = 135
+restart_width = 67
+restart_height = 20
+
+# main menu button positioning
+main_menux = 100
+main_menuy = 165
+main_menu_width = 90
+main_menu_height = 20
+
+# control button positioning
+contx = 112
+conty = 100
+cont_width = 75
+cont_height = 25
+
+controls = False
+control_menu = e.load_img("Control_Menu")
 
 # Game Loop ------------------------------------------------------- #
+
 while True:
 # Background --------------------------------------------- #
 
@@ -401,8 +533,8 @@ while True:
             except FileNotFoundError:
                 break
 
-            #TODO: Take out level inspecting/testing strategem.
-            #TODO: Remember that key = 1
+            # TODO: Take out level inspecting/testing strategem.
+            # TODO: Remember that key = 1
             invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
             player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
 
@@ -839,11 +971,6 @@ while True:
             paused = False
             last_frame = pygame.time.get_ticks()
 
-        # creates level select button
-        level_select_button = e.Button(level_selectx, level_selecty, level_select_width, level_select_height, font, "Level Select", display)
-        if level_select_button.check_button(mx, my, click):
-            exec(open("Main_menu.py").read())
-
         # creates restart button
         restart_button = e.Button(restartx, restarty, restart_width, restart_height, font, "Restart", display)
         if restart_button.check_button(mx, my, click):
@@ -875,6 +1002,11 @@ while True:
         if main_menu_button.check_button(mx, my, click):
             exec(open("Main_menu.py").read())
 
+        # created controls button
+        controls_button = e.Button(contx, conty, cont_width, cont_height, font, "controls", display)
+        if controls_button.check_button(mx, my, click):
+            controls = True
+
         e.blit_center(display, cursor_img, (mx, my))
 
         for ev in pygame.event.get():
@@ -898,6 +1030,18 @@ while True:
                     right = False
                 if ev.key == K_a:
                     left = False
+
+        while controls:
+            display.fill((0, 0, 0))
+            display.blit(control_menu, (0, 0))
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    controls = False
+
+            screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
+            pygame.display.update()
+            mainClock.tick(60)
+
         screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
         pygame.display.update()
         mainClock.tick(60)
@@ -920,6 +1064,12 @@ conn.close()
 
 while True:
     display.fill((34, 23, 36))
+
+    click = pygame.mouse.get_pressed()
+    mx, my = pygame.mouse.get_pos()
+    mx = int(mx / 3)
+    my = int(my / 3)
+
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -932,6 +1082,14 @@ while True:
     text.show_text('You Win!', 150 - get_text_width('You Win!', 1) / 2, 90, 1, 9999, font, display)
     text.show_text(convert_time(total_time), 150 - get_text_width(convert_time(total_time), 1) / 2, 100, 1, 9999, font,
                    display)
+
+    # creates main menu button
+    main_menu_button = e.Button(main_menux, main_menuy, main_menu_width, main_menu_height, font, "Main Menu", display)
+    if main_menu_button.check_button(mx, my, click):
+        exec(open("Main_menu.py").read())
+
+    e.blit_center(display, cursor_img, (mx, my))
+
 
     screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
     pygame.display.update()

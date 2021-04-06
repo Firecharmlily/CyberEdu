@@ -17,6 +17,7 @@ pygame.mouse.set_visible(False)
 pygame.event.set_grab(True)
 
 splash_image = engine.load_img("Title_of_Game")
+control_menu = engine.load_img("Control_Menu")
 cursor = engine.load_img("cursor")
 pygame.mixer.music.load('data/music.wav')
 pygame.mixer.music.play(-1)
@@ -35,7 +36,7 @@ name_width = 90
 name_height = 25
 name_offset = 0
 
-# name entry positioning
+# level entry positioning
 levelx = 170
 levely = 130
 level_width = 90
@@ -54,6 +55,14 @@ endy = 170
 end_width = 50
 end_height = 25
 
+# control button positioning
+contx = 112
+conty = 170
+cont_width = 75
+cont_height = 25
+
+controls = False
+
 while True:
     click = pygame.mouse.get_pressed()
     mx, my = pygame.mouse.get_pos()
@@ -65,6 +74,11 @@ while True:
     display.blit(splash_image, (0, 0))
 
     # creates start button
+    start_button = engine.Button(startx, starty, start_width, start_height, font, "start", display)
+    if start_button.check_button(mx, my, click):
+        sys.argv = ["text", name, level]
+        exec(open("Aeroblaster.py").read())
+
     display.fill((34, 23, 36), (startx, starty, start_width, start_height))
     if startx + start_width > mx > startx and starty + start_height > my > starty:
         display.fill((104, 93, 106), (startx, starty, start_width, start_height))
@@ -73,13 +87,16 @@ while True:
             exec(open("Aeroblaster.py").read())
     text.show_text('start', startx + 8, starty + 5, 1, 9999, font, display, 2)
 
+
     # creates end button
-    display.fill((34, 23, 36), (endx, endy, end_width, end_height))
-    if endx + end_width > mx > endx and endy + end_height > my > endy:
-        display.fill((104, 93, 106), (endx, endy, end_width, end_height))
-        if click[0] == 1:
-            quit()
-    text.show_text('end', endx + 15, endy + 5, 1, 9999, font, display, 2)
+    end_button = engine.Button(endx, endy, end_width, end_height, font, "end", display)
+    if end_button.check_button(mx, my, click):
+        quit()
+
+    # created controls button
+    controls_button = engine.Button(contx, conty, cont_width, cont_height, font, "controls", display)
+    if controls_button.check_button(mx, my, click):
+        controls = True
 
     # creates name entry box
     display.fill((34, 23, 36), (namex, namey, name_width, name_height))
@@ -102,6 +119,7 @@ while True:
         if click[0] == 1:
             text_active_level = False
     text.show_text(level[level_offset:], levelx+5, levely+5, 1, level_width, font, display, 2)
+
 
     # displays cursor on screen
     engine.blit_center(display, cursor, (mx, my))
@@ -136,6 +154,18 @@ while True:
 
             elif event.key == K_ESCAPE:
                 quit()
+
+    while controls:
+        display.fill((0, 0, 0))
+        display.blit(control_menu, (0, 0))
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                controls = False
+
+        screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
+        pygame.display.update()
+        mainClock.tick(60)
+
 
     # scales surface to game window
     screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
