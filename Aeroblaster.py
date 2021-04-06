@@ -432,18 +432,21 @@ def win_screen():
     mainClock.tick(60)
 
 
-def dataBaseInput(n, tt):
+def dataBaseInput(n, levelTime):
+    print(levelTime)
+
     conn = sql.connect('scores.db')
     cursor = conn.cursor()
 
+    name = "Temp" if len(n) < 1 else n
+
     cursor.execute('''CREATE TABLE IF NOT EXISTS scores (name text, time real);''')
 
-    s_query = f'''INSERT INTO scores (name,time) VALUES ('{n}','{tt}'); '''
+    # TODO: players seem to be getting weird times under a minute
+    # TODO: inspect name input maybe?
+
+    s_query = f'''INSERT INTO scores (name,time) VALUES ('{name}','{levelTime}'); '''
     print(s_query)
-    #TEMP FOR CHECKING OF TIME TOOK TO COMPLETE LEVEL
-    #if tt > 1000:
-       # Restart_L()
-    #PLEASE CHECK NOT WORKING
     cursor.execute(s_query)
     conn.commit()
     conn.close()
@@ -510,7 +513,10 @@ while True:
         if bar_height > 100:
             level += 1
             if level==2:
-                dataBaseInput(name, total_time) #IMPORTANT!!!! ADD PREVENTION OF PROGRESS HERE
+                print(level_time)
+                dataBaseInput(argv[1], level_time)
+                # TODO: #IMPORTANT!!!! ADD PREVENTION OF PROGRESS HERE!!!!!!!!!!!!!!
+                # TODO: ##pplssssssss FIXXXX
             temp = str(level)
             total_time += level_time
             level_time = 0
@@ -1027,22 +1033,6 @@ while True:
         screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
         pygame.display.update()
         mainClock.tick(60)
-
-conn = sql.connect('scores.db')
-cursor = conn.cursor()
-
-name = "Temp" if len(argv) < 1 else argv[1]
-
-cursor.execute('''CREATE TABLE IF NOT EXISTS scores (name text, time real);''')
-
-#TODO: players seem to be getting weird times under a minute
-#TODO: inspect name input maybe?
-
-s_query = f'''INSERT INTO scores (name,time) VALUES ('{name}','{total_time}'); '''
-print(s_query)
-cursor.execute(s_query)
-conn.commit()
-conn.close()
 
 while True:
     display.fill((34, 23, 36))
