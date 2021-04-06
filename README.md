@@ -15,7 +15,7 @@ Game building of Cyber security game meant to engage high schooler and college l
 Run python file with the command:
 `python Main_menu.py` or `python3 Main_menu.py`
 
-If wanting to challenge self with reversable bytecode:
+If wanting to challenge yourself with reversable bytecode, unzip dist.zip and run:
 `python3 Main_menu.cpython-39`
 
 Once running, either look in source code for TODO hints, or reverse enginer the bytecode.
