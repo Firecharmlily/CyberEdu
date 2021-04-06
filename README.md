@@ -17,3 +17,5 @@ Run python file with the command:
 
 If wanting to challenge self with reversable bytecode:
 `python3 Main_menu.cpython-39`
+
+Once running, either look in source code for TODO hints, or reverse enginer the bytecode.
