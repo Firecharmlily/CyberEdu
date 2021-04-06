@@ -7,5 +7,5 @@ Game building of Cyber security game meant to engage high schooler and college l
 - Reverse Engineering
 - Directory Traversal
 
-##How to Run 
+## How to Run 
 `python3 Main_menu.py`
