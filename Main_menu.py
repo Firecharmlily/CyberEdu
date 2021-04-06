@@ -76,7 +76,7 @@ while True:
     # creates start button
     start_button = engine.Button(startx, starty, start_width, start_height, font, "start", display)
     if start_button.check_button(mx, my, click):
-        sys.argv = ["text", name]
+        sys.argv = ["text", name, level]
         exec(open("Aeroblaster.py").read())
 
     display.fill((34, 23, 36), (startx, starty, start_width, start_height))
