@@ -17,6 +17,7 @@ pygame.mouse.set_visible(False)
 pygame.event.set_grab(True)
 
 splash_image = engine.load_img("Title_of_Game")
+control_menu = engine.load_img("Control_Menu")
 cursor = engine.load_img("cursor")
 pygame.mixer.music.load('data/music.wav')
 pygame.mixer.music.play(-1)
@@ -40,6 +41,12 @@ endy = 125
 end_width = 50
 end_height = 25
 
+# control button positioning
+contx = 112
+conty = 125
+cont_width = 75
+cont_height = 25
+
 # name entry positioning
 
 namex = 40
@@ -48,12 +55,14 @@ name_width = 90
 name_height = 25
 name_offset = 0
 
-# name entry positioning
+# level entry positioning
 levelx = 170
 levely = 165
 level_width = 90
 level_height = 25
 level_offset = 0
+
+controls = False
 
 while True:
     click = pygame.mouse.get_pressed()
@@ -85,6 +94,11 @@ while True:
     if end_button.check_button(mx, my, click):
         quit()
 
+    # created controls button
+    controls_button = engine.Button(contx, conty, cont_width, cont_height, font, "controls", display)
+    if controls_button.check_button(mx, my, click):
+        controls = True
+
     # creates name entry box
     display.fill((34, 23, 36), (namex, namey, name_width, name_height))
     if namex + name_width > mx > namex and namey + name_height > my > namey:
@@ -104,9 +118,6 @@ while True:
             text_active_level = True
     else:
         if click[0] == 1:
-
-            text_active = False
-    text.show_text(name[text_offset:], 90, 170, 1, name_width, font, display, 2)
             text_active_level = False
     text.show_text(level[level_offset:], levelx+5, levely+5, 1, level_width, font, display, 2)
 
@@ -144,6 +155,18 @@ while True:
 
             elif event.key == K_ESCAPE:
                 quit()
+
+    while controls:
+        display.fill((0, 0, 0))
+        display.blit(control_menu, (0, 0))
+        for event in pygame.event.get():
+            if event.type == KEYDOWN:
+                controls = False
+
+        screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
+        pygame.display.update()
+        mainClock.tick(60)
+
 
     # scales surface to game window
     screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))

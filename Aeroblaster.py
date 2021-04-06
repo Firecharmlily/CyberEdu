@@ -404,7 +404,8 @@ def temp_Pause_test():
     if (cores_left == 0) and (win == 0):
         win = 1
     return True
-#end of temp pause method
+# end of temp pause method
+
 
 # resume button positioning
 resumex = 115
@@ -429,6 +430,16 @@ main_menux = 100
 main_menuy = 165
 main_menu_width = 90
 main_menu_height = 20
+
+# control button positioning
+contx = 112
+conty = 100
+cont_width = 75
+cont_height = 25
+
+controls = False
+control_menu = e.load_img("Control_Menu")
+
 # Game Loop ------------------------------------------------------- #
 
 while True:
@@ -922,11 +933,6 @@ while True:
             paused = False
             last_frame = pygame.time.get_ticks()
 
-        # creates level select button
-        level_select_button = e.Button(level_selectx, level_selecty, level_select_width, level_select_height, font, "Level Select", display)
-        if level_select_button.check_button(mx, my, click):
-            exec(open("Main_menu.py").read())
-
         # creates restart button
         restart_button = e.Button(restartx, restarty, restart_width, restart_height, font, "Restart", display)
         if restart_button.check_button(mx, my, click):
@@ -958,6 +964,11 @@ while True:
         if main_menu_button.check_button(mx, my, click):
             exec(open("Main_menu.py").read())
 
+        # created controls button
+        controls_button = e.Button(contx, conty, cont_width, cont_height, font, "controls", display)
+        if controls_button.check_button(mx, my, click):
+            controls = True
+
         e.blit_center(display, cursor_img, (mx, my))
 
         for ev in pygame.event.get():
@@ -981,6 +992,18 @@ while True:
                     right = False
                 if ev.key == K_a:
                     left = False
+
+        while controls:
+            display.fill((0, 0, 0))
+            display.blit(control_menu, (0, 0))
+            for event in pygame.event.get():
+                if event.type == KEYDOWN:
+                    controls = False
+
+            screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
+            pygame.display.update()
+            mainClock.tick(60)
+
         screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
         pygame.display.update()
         mainClock.tick(60)
@@ -1001,6 +1024,12 @@ conn.close()
 
 while True:
     display.fill((34, 23, 36))
+
+    click = pygame.mouse.get_pressed()
+    mx, my = pygame.mouse.get_pos()
+    mx = int(mx / 3)
+    my = int(my / 3)
+
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -1012,6 +1041,14 @@ while True:
     text.show_text('You Win!', 150 - get_text_width('You Win!', 1) / 2, 90, 1, 9999, font, display)
     text.show_text(convert_time(total_time), 150 - get_text_width(convert_time(total_time), 1) / 2, 100, 1, 9999, font,
                    display)
+
+    # creates main menu button
+    main_menu_button = e.Button(main_menux, main_menuy, main_menu_width, main_menu_height, font, "Main Menu", display)
+    if main_menu_button.check_button(mx, my, click):
+        exec(open("Main_menu.py").read())
+
+    e.blit_center(display, cursor_img, (mx, my))
+
     screen.blit(pygame.transform.scale(display, (900, 600)), (-6, -6))
     pygame.display.update()
     mainClock.tick(60)
