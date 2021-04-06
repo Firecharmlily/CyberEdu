@@ -92,7 +92,7 @@ def xy2str(pos):
 
 def load_level(number):
     # TODO: Fix levels to read ints and not strings
-    # TODO: Inspect why players can access hidden level
+    # TODO: Inspect why players can access hidden level x without moving it into levels
     pathNameTest = "data/levels/"
     onlyfiles = next(os.walk(pathNameTest))[2]  # dir is your directory path as string
     #print(len(onlyfiles))
