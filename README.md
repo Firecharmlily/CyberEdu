@@ -8,4 +8,4 @@ Game building of Cyber security game meant to engage high schooler and college l
 - Directory Traversal
 
 ## How to Run 
-`python Main_menu.py`
+`python Main_menu.py` or `python3 Main_menu.py`
