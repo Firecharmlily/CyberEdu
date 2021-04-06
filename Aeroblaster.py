@@ -92,7 +92,8 @@ def xy2str(pos):
 
 
 def load_level(number):
-
+    # TODO: Fix levels to read ints and not strings
+    # TODO: Inspect why players can access hidden level
     pathNameTest = "data/levels/"
     onlyfiles = next(os.walk(pathNameTest))[2]  # dir is your directory path as string
     #print(len(onlyfiles))
@@ -532,7 +533,8 @@ while True:
             except FileNotFoundError:
                 break
 
-            #----INVISIBLE ARGUMENT ERROR FOUND AND TEMP RESOLVED
+            # TODO: Take out level inspecting/testing strategem.
+            # TODO: Remember that key = 1
             invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
             player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player', visible=not invisible)
 
@@ -1050,6 +1052,9 @@ cursor = conn.cursor()
 name = "Temp" if len(argv) < 1 else argv[1]
 
 cursor.execute('''CREATE TABLE IF NOT EXISTS scores (name text, time real);''')
+
+#TODO: players seem to be getting weird times under a minute
+#TODO: inspect name input maybe?
 
 s_query = f'''INSERT INTO scores (name,time) VALUES ('{name}','{total_time}'); '''
 print(s_query)
