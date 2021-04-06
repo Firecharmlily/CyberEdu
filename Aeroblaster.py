@@ -100,7 +100,7 @@ def load_level(number):
     levelTemp="1"
 
     if(number != ""):
-        level = str(number) + ".txt"
+        level = number + ".txt"
 
     else:
         level = levelTemp + ".txt"
@@ -164,16 +164,18 @@ if len(argv) >= 2:
 else:
     name = "EmptyUser"
 
-level=1
-levelTemp=""
-try:
-    if len(argv) >= 3:
-        level = int(argv[2])
-except:
+level = 1
+levelTemp = ""
+
+tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(str(level))
+
+if len(argv[2]) > 1:
     levelTemp = argv[2]
+    tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(levelTemp)
 
-
-tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
+if len(argv[2]) == 1:
+    level = int(argv[2])
+    tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(str(level))
 
 current_fps = 0
 dt = 0  # delta time
@@ -375,102 +377,6 @@ def entity_Loop():
             entities.pop(i)
 
 #begining of temp pause method
-def temp_Pause_test():
-    global shoot_s_cooldown, last_frame, level_time, game_speed, background_timer, win
-    global bar_height, true_scroll, scroll, camera_sources, scroll_target, entities, mx, my
-    global cores_left, level, total_time
-    dt = pygame.time.get_ticks() - last_frame
-    last_frame = pygame.time.get_ticks()
-    fps.get_time()
-    if not dead:
-        level_time += dt * game_speed
-    display.fill((34, 23, 36))
-    main_display.fill((0, 0, 0))
-
-    if shoot_s_cooldown > 0:
-        shoot_s_cooldown -= 1
-
-    background_timer = (background_timer + dtf(dt) * game_speed * 0.5) % 20
-    for i in range(16):
-        i -= 4
-        pygame.draw.line(display, (8, 5, 8), (0, i * 20 - background_timer),
-                         (display.get_width(), i * 20 - background_timer + 30 * (1.2 / (game_speed + 0.2))), 7)
-
-    if win != 0:
-        win += 1
-
-    game_speed += (1 - game_speed) / 20
-    if win < 50:
-        bar_height += ((1 - game_speed) * 40 - bar_height) / 10
-    elif win >= 50:
-        bar_height += (110 - bar_height) / 10
-        if bar_height > 100:
-
-            # level is number, level is numeric string, or level is text
-            if not type(level) == int:
-                if level.isnumeric():
-                    level = int(level)
-                else:
-                    level = 0
-
-            level += 1
-            temp = str(level) + ".txt"
-            total_time += level_time
-            level_time = 0
-
-            try:
-                tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
-            except FileNotFoundError:
-                return False
-
-
-            player = e.entity(spawnpoint[0] + 4, spawnpoint[1] - 17, 8, 15, 'player')
-            player.set_offset([-3, -2])
-            bullets = []
-            explosion_particles = []
-            particles = []
-            circle_effects = []
-            scroll_target = [player.get_center()[0], player.get_center()[1]]
-            scroll = scroll_target.copy()
-            true_scroll = scroll.copy()
-            win = 0
-            moved = False
-            left = False
-            right = False
-            player_velocity = [0, 0]
-            flashes = []
-    if abs(1 - game_speed) < 0.05:
-        game_speed = 1
-
-    scroll = [int(true_scroll[0]), int(true_scroll[1])]
-
-    lowest = [10, None]
-    for i, source in enumerate(camera_sources):
-        if source[0] < lowest[0]:
-            lowest = [source[0], i]
-
-    if lowest[1] != None:
-        if not dead:
-            scroll_target = camera_sources[lowest[1]][1]
-            game_speed = lowest[0]
-
-    true_scroll[0] += (scroll_target[0] - display.get_width() / 2 - true_scroll[0]) / 10 * dtf(dt)
-    true_scroll[1] += (scroll_target[1] - display.get_height() / 2 - true_scroll[1]) / 10 * dtf(dt)
-
-    mx, my = pygame.mouse.get_pos()
-    mx = int(mx / 3)
-    my = int(my / 3)
-
-    camera_sources = []
-
-    cores_left = 0
-    for entity in entities:
-        if entity[0].type == 'core':
-            cores_left += 1
-    if (cores_left == 0) and (win == 0):
-        win = 1
-    return True
-# end of temp pause method
 
 
 # resume button positioning
