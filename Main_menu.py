@@ -63,6 +63,9 @@ cont_height = 25
 
 controls = False
 
+text_active_name = False
+text_active_level = False
+
 while True:
     click = pygame.mouse.get_pressed()
     mx, my = pygame.mouse.get_pos()
