@@ -242,6 +242,7 @@ if len(argv) > 1:
 
     invisible = "invisible" == "".join([chr(ord(c) + 1) for c in name])
     player.alpha = 64 if invisible else 255
+    player.visible = not invisible
 else:
     name = "EmptyUser"
 
