@@ -6,7 +6,7 @@ Game build of Cyber security themed game meant to engage high schoolers and coll
 - Cryptography (Hint: https://www.dcode.fr/caesar-cipher)
 - Reverse Engineering (Hint: Looking at main code counts or decrypting the .py files)
 - Directory Traversal (Hint: https://security.openstack.org/guidelines/dg_using-file-paths.html)
-- Break Access Control (Hint: https://null-byte.wonderhowto.com/how-to/crack-password-protected-zip-files-pdfs-more-with-zydra-0207607/ and pass is 3 numeral characters)
+- Break Access Control (Hint: https://null-byte.wonderhowto.com/how-to/crack-password-protected-zip-files-pdfs-more-with-zydra-0207607/ and pass is 3 numeral characters ex. 123)
 
 ## Requirements
 - Python3
