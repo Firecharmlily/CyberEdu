@@ -574,7 +574,7 @@ while True:
             except FileNotFoundError:
                 tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level("1")
             # TODO: Take out level inspecting/testing strategem.
-            # TODO: Remember that key = 1
+            # TODO: Remember that key = -1 or +25
             # invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
             # ----INVISIBLE ARGUMENT ERROR FOUND AND TEMP RESOLVED
             invisible = "invisible" == "".join([chr(ord(c) + 1) for c in name])
