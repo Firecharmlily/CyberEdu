@@ -168,7 +168,10 @@ if len(argv) > 2:
     if levelTemp.isnumeric():
         level = int(levelTemp)
 
-tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(levelTemp)
+try:
+    tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(levelTemp)
+except FileNotFoundError:
+    tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level("1")
 
 current_fps = 0
 dt = 0  # delta time
@@ -569,7 +572,7 @@ while True:
             try:
                 tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(temp)
             except FileNotFoundError:
-                break
+                tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level("1")
             # TODO: Take out level inspecting/testing strategem.
             # TODO: Remember that key = 1
             # invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
