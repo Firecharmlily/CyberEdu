@@ -13,6 +13,7 @@ Game build of Cyber security themed game meant to engage high schoolers and coll
 - pygames (pip install pygame)
 - Some python knowledge
 - Open Mind
+- 7-Zip (To help break access the answer.zip)
 
 ##Recommended Python IDE
 - Pycharm
