@@ -1012,7 +1012,7 @@ while True:
         # creates restart button
         restart_button = e.Button(restartx, restarty, restart_width, restart_height, font, "Restart", display)
         if restart_button.check_button(mx, my, click):
-            tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(level)
+            tile_map, entities, map_height, spawnpoint, total_cores, limits = load_level(str(level))
 
             invisible = "invisible" == "".join([chr(ord(c) + 1) for c in sys.argv[1]])
 
