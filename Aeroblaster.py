@@ -878,13 +878,13 @@ while True:
         main_display.blit(core_img, (145, 47))
 
     if level == 2:
-        text.show_text('drop to loop around', 150 - int(get_text_width('drop to loop around', 1) / 2), 45, 1, 9999,
+        text.show_text('Drop to loop around.  Error: not hidden level', 150 - int(get_text_width('Drop to loop around.  Error: not hidden level', 1) / 2), 45, 1, 9999,
                        font, main_display)
     if level == 3:
-        text.show_text('shoot    avoid', 150 - int(get_text_width('shoot    avoid', 1) / 2), 45, 1, 9999, font,
+        text.show_text('shoot    avoid    ghcd?', 150 - int(get_text_width('shoot    avoid    ghcd?', 1) / 2), 45, 1, 9999, font,
                        main_display)
-        main_display.blit(turret_example_img, (122, 57))
-        main_display.blit(shot_example_img, (163, 57))
+        main_display.blit(turret_example_img, (107, 57))
+        main_display.blit(shot_example_img, (147, 57))
     if dead:
         text.show_text('click to restart', 150 - int(get_text_width('click to restart', 1) / 2), 97, 1, 9999, font,
                        main_display)
