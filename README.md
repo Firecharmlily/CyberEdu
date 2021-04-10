@@ -15,7 +15,7 @@ Game build of Cyber security themed game meant to engage high schoolers and coll
 - Open Mind
 - 7-Zip (To help break access the answer.zip)
 
-##Recommended Python IDE
+## Recommended Python IDE
 - Pycharm
 
 ## How to Run
