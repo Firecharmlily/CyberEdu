@@ -122,35 +122,6 @@ class physics_obj(object):
         return collision_types
 
 
-# 3d collision detection
-# todo: add 3d physics-based movement
-
-class cuboid(object):
-
-    def __init__(self, x, y, z, x_size, y_size, z_size):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.x_size = x_size
-        self.y_size = y_size
-        self.z_size = z_size
-
-    def set_pos(self, x, y, z):
-        self.x = x
-        self.y = y
-        self.z = z
-
-    def collidecuboid(self, cuboid_2):
-        cuboid_1_xy = pygame.Rect(self.x, self.y, self.x_size, self.y_size)
-        cuboid_1_yz = pygame.Rect(self.y, self.z, self.y_size, self.z_size)
-        cuboid_2_xy = pygame.Rect(cuboid_2.x, cuboid_2.y, cuboid_2.x_size, cuboid_2.y_size)
-        cuboid_2_yz = pygame.Rect(cuboid_2.y, cuboid_2.z, cuboid_2.y_size, cuboid_2.z_size)
-        if (cuboid_1_xy.colliderect(cuboid_2_xy)) and (cuboid_1_yz.colliderect(cuboid_2_yz)):
-            return True
-        else:
-            return False
-
-
 # entity stuff
 
 def simple_entity(x, y, e_type):
